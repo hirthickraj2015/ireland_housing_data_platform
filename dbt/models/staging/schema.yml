@@ -1,0 +1,47 @@
+version: 2
+
+sources:
+  - name: raw
+    description: Raw data tables loaded by ETL pipeline
+    schema: public
+    tables:
+      - name: raw_daft_listings
+        description: Raw rental listings scraped from Daft.ie
+        columns:
+          - name: property_id
+            description: Unique property identifier
+            tests:
+              - not_null
+
+      - name: raw_cso_rent
+        description: CSO Residential Tenancies Rent Index data
+
+      - name: raw_cso_income
+        description: CSO Disposable Income data by county
+
+      - name: raw_property_sales
+        description: Property Price Register sales data
+
+      - name: raw_ecb_rates
+        description: ECB interest rate data
+
+models:
+  - name: stg_daft_listings
+    description: Cleaned and standardized Daft.ie rental listings
+    columns:
+      - name: property_id
+        description: Unique property identifier
+        tests:
+          - not_null
+          - unique
+
+      - name: price
+        description: Monthly rental price in EUR
+        tests:
+          - not_null
+
+      - name: county
+        description: Irish county where property is located
+
+      - name: bedrooms
+        description: Number of bedrooms

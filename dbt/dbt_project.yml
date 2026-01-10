@@ -1,0 +1,46 @@
+name: 'irish_housing'
+version: '1.0.0'
+config-version: 2
+
+# Project profile
+profile: 'irish_housing'
+
+# Directories
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+# Model configurations
+models:
+  irish_housing:
+    # Staging models (raw data transformations)
+    staging:
+      +materialized: view
+      +schema: staging
+
+    # Core dimension and fact tables
+    marts:
+      core:
+        +materialized: table
+        +schema: marts
+      kpis:
+        +materialized: view
+        +schema: analytics
+
+# Seeds configuration
+seeds:
+  irish_housing:
+    +schema: seeds
+
+# Variables
+vars:
+  current_year: 2024
+  lookback_months: 12
