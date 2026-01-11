@@ -38,3 +38,13 @@ isort==5.13.2
 
 # Scheduling (local development)
 schedule==1.2.1
+
+# Jupyter Notebooks (for interactive development)
+jupyter==1.0.0
+notebook==7.0.6
+ipykernel==6.27.1
+ipywidgets==8.1.1
+
+# Browser Automation (for Cloudflare bypass)
+playwright==1.48.0
+nest-asyncio==1.6.0  # For running Playwright in Jupyter

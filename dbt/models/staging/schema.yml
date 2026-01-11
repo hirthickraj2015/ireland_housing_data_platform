@@ -2,46 +2,272 @@ version: 2
 
 sources:
   - name: raw
-    description: Raw data tables loaded by ETL pipeline
+    description: Raw data tables loaded by ETL pipeline from multiple sources
     schema: public
+
     tables:
+      # ========================================================================
+      # DAFT.IE RENTAL LISTINGS
+      # ========================================================================
       - name: raw_daft_listings
-        description: Raw rental listings scraped from Daft.ie
+        description: >
+          Raw rental listings scraped from Daft.ie with complete 38-field capture.
+          Updated daily via automated Playwright scraper.
+
         columns:
+          - name: id
+            description: Auto-incrementing primary key
+            tests:
+              - not_null
+              - unique
+
           - name: property_id
-            description: Unique property identifier
+            description: Daft property ID (unique per listing)
             tests:
               - not_null
 
+          - name: price
+            description: Monthly rental price in EUR (parsed as decimal)
+            tests:
+              - not_null
+
+          - name: county
+            description: Irish county location
+
+          - name: scraped_at
+            description: Timestamp when listing was scraped
+            tests:
+              - not_null
+
+      # ========================================================================
+      # CSO RENT INDEX (RIA02)
+      # ========================================================================
       - name: raw_cso_rent
-        description: CSO Residential Tenancies Rent Index data
+        description: >
+          CSO Residential Tenancies Board Average Monthly Rent data (RIA02).
+          Provides official rent statistics by county, bedrooms, and property type.
 
+        columns:
+          - name: id
+            description: Auto-incrementing primary key
+            tests:
+              - not_null
+              - unique
+
+          - name: year
+            description: Year of data
+            tests:
+              - not_null
+
+          - name: location_label
+            description: County or area name
+            tests:
+              - not_null
+
+          - name: value
+            description: Average monthly rent value
+            tests:
+              - not_null
+
+      # ========================================================================
+      # CSO CONSUMER PRICE INDEX (CPA01)
+      # ========================================================================
+      - name: raw_cso_cpi
+        description: >
+          CSO Consumer Price Index data (CPA01).
+          Tracks inflation and price changes over time for various commodity groups.
+
+        columns:
+          - name: id
+            description: Auto-incrementing primary key
+            tests:
+              - not_null
+              - unique
+
+          - name: year
+            description: Year of data
+            tests:
+              - not_null
+
+          - name: commodity_label
+            description: Commodity group label (Housing, Rent, etc.)
+            tests:
+              - not_null
+
+          - name: value
+            description: CPI index value
+            tests:
+              - not_null
+
+      # ========================================================================
+      # CSO POPULATION (PEA01)
+      # ========================================================================
+      - name: raw_cso_population
+        description: >
+          CSO Population Estimates (PEA01).
+          Annual population estimates by age group and sex.
+
+        columns:
+          - name: id
+            description: Auto-incrementing primary key
+            tests:
+              - not_null
+              - unique
+
+          - name: year
+            description: Year of data
+            tests:
+              - not_null
+
+          - name: value
+            description: Population value
+            tests:
+              - not_null
+
+      # ========================================================================
+      # CSO INCOME (CIA01)
+      # ========================================================================
       - name: raw_cso_income
-        description: CSO Disposable Income data by county
+        description: >
+          CSO Disposable Income data by county (CIA01).
+          County-level income statistics for affordability analysis.
 
+        columns:
+          - name: id
+            description: Auto-incrementing primary key
+            tests:
+              - not_null
+              - unique
+
+          - name: location_label
+            description: County or region name
+            tests:
+              - not_null
+
+          - name: year
+            description: Year of data
+            tests:
+              - not_null
+
+          - name: statistic_label
+            description: Income statistic type description
+            tests:
+              - not_null
+
+          - name: value
+            description: Income value
+            tests:
+              - not_null
+
+      # ========================================================================
+      # PROPERTY PRICE REGISTER
+      # ========================================================================
       - name: raw_property_sales
         description: Property Price Register sales data
+        columns:
+          - name: id
+            description: Auto-incrementing primary key
+            tests:
+              - not_null
+              - unique
 
+          - name: date_of_sale
+            description: Date of property sale
+            tests:
+              - not_null
+
+          - name: price
+            description: Sale price in EUR
+            tests:
+              - not_null
+
+      # ========================================================================
+      # ECB INTEREST RATES
+      # ========================================================================
       - name: raw_ecb_rates
-        description: ECB interest rate data
+        description: European Central Bank interest rate data
+        columns:
+          - name: id
+            description: Auto-incrementing primary key
+            tests:
+              - not_null
+              - unique
+
+          - name: rate_type
+            description: Type of interest rate
+            tests:
+              - not_null
+
+          - name: time_period
+            description: Time period
+            tests:
+              - not_null
+
+          - name: rate_value
+            description: Interest rate value
+            tests:
+              - not_null
 
 models:
   - name: stg_daft_listings
-    description: Cleaned and standardized Daft.ie rental listings
+    description: Cleaned and standardized Daft.ie rental listings with all 38 fields
     columns:
       - name: property_id
-        description: Unique property identifier
+        description: Daft property ID
         tests:
           - not_null
-          - unique
 
       - name: price
-        description: Monthly rental price in EUR
+        description: Monthly rental price
         tests:
           - not_null
 
       - name: county
-        description: Irish county where property is located
+        description: Irish county
+        tests:
+          - not_null
 
-      - name: bedrooms
-        description: Number of bedrooms
+      - name: scraped_at
+        description: Scrape timestamp
+        tests:
+          - not_null
+
+  - name: stg_cso_rent
+    description: CSO Rent Index data (RIA02) cleaned and standardized
+    columns:
+      - name: year
+        tests:
+          - not_null
+      - name: rent_value
+        tests:
+          - not_null
+
+  - name: stg_cso_cpi
+    description: CSO Consumer Price Index cleaned and standardized
+    columns:
+      - name: year
+        tests:
+          - not_null
+      - name: cpi_value
+        tests:
+          - not_null
+
+  - name: stg_cso_population
+    description: CSO Population estimates cleaned and standardized
+    columns:
+      - name: year
+        tests:
+          - not_null
+      - name: population_count
+        tests:
+          - not_null
+
+  - name: stg_cso_income
+    description: CSO Income data by county cleaned and standardized
+    columns:
+      - name: year
+        tests:
+          - not_null
+      - name: income_amount
+        tests:
+          - not_null

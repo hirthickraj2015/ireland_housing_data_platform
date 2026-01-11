@@ -71,10 +71,13 @@ dbt/.user.yml
 *.pbix.tmp
 *.pbix.backup
 
-# Data files (optional - uncomment if you want to exclude data)
-# *.csv
-# *.json
-# *.parquet
+# Data files (exports from notebooks)
+data/*
+!data/.gitkeep
+!data/cso/.gitkeep
+*.csv
+*.json
+*.parquet
 
 # OS
 Thumbs.db

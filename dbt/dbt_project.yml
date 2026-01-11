@@ -25,15 +25,41 @@ models:
     staging:
       +materialized: view
       +schema: staging
+      +tags: ['staging']
 
     # Core dimension and fact tables
     marts:
       core:
         +materialized: table
         +schema: marts
+        +tags: ['marts', 'core']
+
+        # Dimension tables (full refresh)
+        dim_county:
+          +materialized: table
+        dim_date:
+          +materialized: table
+
+        # Fact tables (incremental)
+        fact_listings:
+          +materialized: incremental
+          +on_schema_change: sync_all_columns
+          +tags: ['marts', 'fact', 'incremental']
+
+        fact_rent_market:
+          +materialized: incremental
+          +on_schema_change: sync_all_columns
+          +tags: ['marts', 'fact', 'incremental']
+
+        fact_cso_rent:
+          +materialized: incremental
+          +on_schema_change: sync_all_columns
+          +tags: ['marts', 'fact', 'incremental']
+
       kpis:
         +materialized: view
         +schema: analytics
+        +tags: ['kpis', 'analytics']
 
 # Seeds configuration
 seeds:
@@ -42,5 +68,5 @@ seeds:
 
 # Variables
 vars:
-  current_year: 2024
+  current_year: 2026
   lookback_months: 12
