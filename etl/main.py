@@ -2,8 +2,7 @@
 Main ETL Pipeline Orchestrator
 Runs all scrapers and loads data into PostgreSQL
 """
-import sys
-from datetime import datetime
+import asyncio
 
 from etl.scrapers.daft_scraper import DaftScraper
 from etl.scrapers.cso_scraper import CSOScraper
@@ -26,7 +25,7 @@ class ETLPipeline:
         self.property_scraper = PropertyPriceScraper()
         self.loader = DataLoader()
 
-    def run_full_pipeline(self):
+    async def run_full_pipeline(self):
         """Execute the complete ETL pipeline"""
         logger.info("=" * 80)
         logger.info("STARTING FULL ETL PIPELINE")
@@ -40,7 +39,7 @@ class ETLPipeline:
 
             # Step 1: Extract data from all sources
             logger.info("\n📡 EXTRACTION PHASE")
-            data = self._extract_all_data()
+            data = await self._extract_all_data()
 
             # Step 2: Load data into PostgreSQL
             logger.info("\n💾 LOADING PHASE")
@@ -56,14 +55,17 @@ class ETLPipeline:
             logger.error(f"Pipeline failed: {e}", exc_info=True)
             return False
 
-    def _extract_all_data(self) -> dict:
+    async def _extract_all_data(self) -> dict:
         """Extract data from all sources"""
         data = {}
 
         # 1. Daft.ie rental listings
         try:
             logger.info("Scraping Daft.ie rental listings...")
-            data['daft_listings'] = self.daft_scraper.scrape_listings(max_pages=5)
+            # Use incremental scraping for efficiency - automatically handles full vs incremental
+            data['daft_listings'] = await self.daft_scraper.scrape_listings_incremental(
+                max_pages_incremental=3  # Only check recent 3 pages for incremental loads
+            )
             logger.info(f"✓ Daft: {len(data['daft_listings'])} listings scraped")
         except Exception as e:
             logger.error(f"✗ Daft scraping failed: {e}")
@@ -131,10 +133,10 @@ class ETLPipeline:
         logger.info(f"{'TOTAL':.<40} {total_rows:>10} rows")
         logger.info("=" * 80)
 
-    def run_scrapers_only(self):
+    async def run_scrapers_only(self):
         """Run only the scraping phase (no loading)"""
         logger.info("Running scrapers only (no database load)")
-        data = self._extract_all_data()
+        data = await self._extract_all_data()
         return data
 
     def run_specific_scraper(self, scraper_name: str):
@@ -154,7 +156,7 @@ class ETLPipeline:
         return scrapers[scraper_name]()
 
 
-def main():
+async def main():
     """Main entry point"""
     pipeline = ETLPipeline()
 
@@ -164,7 +166,7 @@ def main():
 
         if command == 'extract':
             # Run scrapers only
-            data = pipeline.run_scrapers_only()
+            data = await pipeline.run_scrapers_only()
             logger.info("Extraction complete")
 
         elif command in ['daft', 'cso', 'ecb', 'property']:
@@ -178,9 +180,9 @@ def main():
             sys.exit(1)
     else:
         # Run full pipeline
-        success = pipeline.run_full_pipeline()
+        success = await pipeline.run_full_pipeline()
         sys.exit(0 if success else 1)
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

@@ -15,6 +15,7 @@ from playwright.async_api import async_playwright, Browser, Page, TimeoutError a
 
 from etl.config import Config
 from etl.utils.logger import get_logger
+from etl.utils.database import db
 
 logger = get_logger(__name__)
 
@@ -445,7 +446,144 @@ class DaftScraperAutomatedAsync:
         return None
 
 
+    # ============================================================================
+    # INCREMENTAL LOADING METHODS
+    # ============================================================================
+
+    def get_last_checkpoint(self) -> Optional[Dict]:
+        """Get the last successful scrape checkpoint for Daft data"""
+        try:
+            query = """
+                SELECT last_scraped_at, last_property_id, last_publish_date, total_records_scraped
+                FROM scraping_checkpoints
+                WHERE data_source = 'daft' AND status = 'completed'
+                ORDER BY last_scraped_at DESC
+                LIMIT 1
+            """
+            result = db.execute_query(query)
+            return result[0] if result else None
+        except Exception as e:
+            logger.warning(f"Could not retrieve checkpoint: {e}")
+            return None
+
+    def update_checkpoint(self, last_property_id: str = None, last_publish_date: int = None,
+                         total_records: int = 0, status: str = 'completed', error_msg: str = None):
+        """Update the scraping checkpoint"""
+        try:
+            # Upsert checkpoint
+            query = """
+                INSERT INTO scraping_checkpoints
+                (data_source, last_scraped_at, last_property_id, last_publish_date,
+                 total_records_scraped, status, error_message)
+                VALUES (%s, CURRENT_TIMESTAMP, %s, %s, %s, %s, %s)
+                ON CONFLICT (data_source)
+                DO UPDATE SET
+                    last_scraped_at = CURRENT_TIMESTAMP,
+                    last_property_id = EXCLUDED.last_property_id,
+                    last_publish_date = EXCLUDED.last_publish_date,
+                    total_records_scraped = EXCLUDED.total_records_scraped,
+                    status = EXCLUDED.status,
+                    error_message = EXCLUDED.error_message
+            """
+            db.execute_sql(query, ('daft', last_property_id, last_publish_date,
+                                 total_records, status, error_msg))
+            logger.info(f"Updated checkpoint: status={status}, records={total_records}")
+        except Exception as e:
+            logger.error(f"Failed to update checkpoint: {e}")
+
+    def should_do_full_load(self) -> bool:
+        """Determine if we should do a full load or incremental load"""
+        try:
+            # Check if we have any Daft data
+            query = "SELECT COUNT(*) as count FROM raw_daft_listings"
+            result = db.execute_query(query)
+            has_data = result[0]['count'] > 0 if result else False
+
+            # Check if we have a valid checkpoint
+            checkpoint = self.get_last_checkpoint()
+            has_checkpoint = checkpoint is not None
+
+            # If no data exists, do full load
+            if not has_data:
+                logger.info("No existing data found - performing full load")
+                return True
+
+            # If we have data but no checkpoint, assume we need full load to establish baseline
+            if not has_checkpoint:
+                logger.info("No checkpoint found - performing full load to establish baseline")
+                return True
+
+            # Otherwise, do incremental load
+            logger.info("Existing data and checkpoint found - performing incremental load")
+            return False
+
+        except Exception as e:
+            logger.warning(f"Could not determine load type: {e} - defaulting to full load")
+            return True
+
+    async def scrape_listings_incremental(self, max_pages_incremental: int = 5) -> List[Dict]:
+        """
+        Smart scraping that does full load initially, then incremental loads
+
+        Args:
+            max_pages_incremental: Maximum pages to scrape for incremental loads
+
+        Returns:
+            List of property dictionaries
+        """
+        if self.should_do_full_load():
+            logger.info("🔄 PERFORMING FULL LOAD - Getting ALL historical data from Daft.ie")
+            # For full load, scrape ALL available pages to get complete dataset
+            listings = await self.scrape_all_listings(max_pages=1000)  # Safety limit of 1000 pages
+
+            if listings:
+                # Update checkpoint with the latest data
+                latest_listing = max(listings, key=lambda x: x.get('publish_date', 0) or 0)
+                self.update_checkpoint(
+                    last_property_id=latest_listing.get('property_id'),
+                    last_publish_date=latest_listing.get('publish_date'),
+                    total_records=len(listings),
+                    status='completed'
+                )
+                logger.info(f"✅ Full load completed: {len(listings)} total listings, checkpoint saved")
+        else:
+            logger.info("🔄 PERFORMING INCREMENTAL LOAD - Getting only new data")
+            checkpoint = self.get_last_checkpoint()
+            last_publish_date = checkpoint.get('last_publish_date') if checkpoint else None
+
+            # For incremental load, scrape fewer pages but filter for new data
+            all_listings = await self.scrape_listings(max_pages=max_pages_incremental)
+
+            # Filter to only newer listings than our checkpoint
+            if last_publish_date:
+                new_listings = [
+                    listing for listing in all_listings
+                    if (listing.get('publish_date') or 0) > last_publish_date
+                ]
+                logger.info(f"🔍 Filtered {len(all_listings)} scraped listings to {len(new_listings)} new listings")
+                listings = new_listings
+            else:
+                listings = all_listings
+
+            if listings:
+                # Update checkpoint
+                latest_listing = max(listings, key=lambda x: x.get('publish_date', 0) or 0)
+                total_scraped = checkpoint.get('total_records_scraped', 0) + len(listings) if checkpoint else len(listings)
+                self.update_checkpoint(
+                    last_property_id=latest_listing.get('property_id'),
+                    last_publish_date=latest_listing.get('publish_date'),
+                    total_records=total_scraped,
+                    status='completed'
+                )
+                logger.info(f"✅ Incremental load completed: {len(listings)} new listings")
+            else:
+                logger.info("ℹ️  No new listings found")
+
+        return listings
+
+
 async def main():
+    """Main function to run automated scraper"""
     """Main function to run automated scraper"""
     logger.info("Starting automated Daft scraper")
 

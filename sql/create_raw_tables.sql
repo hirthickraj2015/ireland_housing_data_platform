@@ -14,6 +14,24 @@
 -- DROP TABLE IF EXISTS raw_ecb_rates CASCADE;
 
 -- ============================================================================
+-- SCRAPING CHECKPOINTS (For incremental loading)
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS scraping_checkpoints (
+    id SERIAL PRIMARY KEY,
+    data_source VARCHAR(50) NOT NULL,  -- 'daft', 'cso', etc.
+    last_scraped_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_property_id VARCHAR(100),  -- For daft listings
+    last_publish_date BIGINT,  -- Unix timestamp for daft
+    total_records_scraped INTEGER DEFAULT 0,
+    status VARCHAR(20) DEFAULT 'completed',  -- 'completed', 'failed', 'in_progress'
+    error_message TEXT,
+    UNIQUE(data_source)
+);
+
+-- Index for quick lookups
+CREATE INDEX IF NOT EXISTS idx_checkpoints_data_source ON scraping_checkpoints(data_source);
+
+-- ============================================================================
 -- 1. DAFT.IE RENTAL LISTINGS (ALL 38 FIELDS)
 -- ============================================================================
 CREATE TABLE IF NOT EXISTS raw_daft_listings (

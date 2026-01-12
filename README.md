@@ -8,18 +8,18 @@ Automated ETL platform that ingests Irish rental listings, official statistics, 
 
 ## Quick Start
 
-**See [RUN_INSTRUCTIONS.md](RUN_INSTRUCTIONS.md) for detailed setup guide.**
+**See [SMART_ETL_GUIDE.md](SMART_ETL_GUIDE.md) for intelligent ETL details.**
 
 ```bash
 # 1. Setup environment
 python -m venv venv && source venv/bin/activate
-pip install dbt-core dbt-postgres pandas python-dotenv sqlalchemy loguru
+pip install dbt-core dbt-postgres pandas sqlalchemy loguru beautifulsoup4 playwright
 
 # 2. Deploy database tables
 python deploy_tables.py
 
-# 3. Load data
-python load_daft_only.py
+# 3. Run smart ETL (automatically detects full vs incremental mode)
+python run_smart_etl.py --daft-only
 
 # 4. Run dbt models
 cd dbt
@@ -80,16 +80,17 @@ ireland_housing_data_platform/
 
 ## Key Features
 
+✅ **Smart ETL with automatic mode detection** - Detects empty DB → full load, or existing data → incremental
 ✅ **All 38 Daft listing fields captured** - Complete data extraction
-✅ **Incremental dbt models** - Efficient data processing
+✅ **Incremental dbt models** - Efficient data processing with automatic checkpoint tracking
 ✅ **46 data quality tests** - Comprehensive validation
 ✅ **Star schema design** - Optimized for analytics
-✅ **Production-ready** - Tested and validated
+✅ **Production-ready** - Tested and validated with real data
 
 ## Data Pipeline
 
-1. **Extract:** Scrape Daft.ie + fetch CSO APIs
-2. **Load:** Insert raw data into PostgreSQL
+1. **Extract:** Scrape ALL Daft.ie listings initially + fetch CSO APIs (incremental for Daft going forward, full for others)
+2. **Load:** Insert raw data into PostgreSQL with checkpoint tracking
 3. **Transform:** dbt models clean and structure data
 4. **Serve:** Analytics views ready for BI tools
 

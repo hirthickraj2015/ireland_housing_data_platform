@@ -86,9 +86,43 @@ Expected output:
 ✅ 46 tests passed
 ```
 
-## Step 5: Incremental Updates
+## Step 5: Incremental ETL Loading
 
-After initial load, use incremental runs:
+The pipeline now supports **smart incremental loading** for Daft data:
+
+### Initial Full Load (One-time)
+```bash
+# First run - gets ALL available Daft listings
+python etl/main.py
+```
+- **Automatically scrapes ALL available pages** until no more listings found
+- Gets complete historical dataset (potentially thousands of listings)
+- Creates checkpoint for future incremental loads
+
+### Ongoing Incremental Updates
+```bash
+# Subsequent runs - gets only new listings
+python etl/main.py
+```
+- Automatically detects existing data and checkpoints
+- Scrapes only recent pages (3 pages) and filters for new listings
+- Uses `publish_date` and `property_id` for incremental filtering
+
+### Manual Control
+```bash
+# Force full refresh (if needed)
+python etl/main.py extract  # Scrapers only, no loading
+```
+
+**How it works:**
+- **Checkpoint table** (`scraping_checkpoints`) tracks last successful scrape
+- **Smart detection** automatically switches between full/incremental modes
+- **Date filtering** ensures only newer listings than last checkpoint are processed
+- **Dynamic page detection** stops when no more listings are available
+
+## Step 6: Incremental dbt Updates
+
+After ETL loading, update dbt models incrementally:
 
 ```bash
 cd dbt
