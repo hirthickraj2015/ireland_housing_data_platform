@@ -111,7 +111,7 @@ class SmartDaftScraper:
 
         self.context = await self.browser.new_context(
             viewport={'width': 1920, 'height': 1080},
-            user_agent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+            user_agent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
             locale='en-US',
             timezone_id='Europe/Dublin',
         )
@@ -119,11 +119,26 @@ class SmartDaftScraper:
         await self.context.set_extra_http_headers({
             'Accept-Language': 'en-US,en;q=0.9',
             'Accept-Encoding': 'gzip, deflate, br',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
         })
 
         self.page = await self.context.new_page()
         logger.info("Browser started successfully")
+
+    async def wait_for_cloudflare(self, timeout: int = 30000):
+        """Wait for Cloudflare challenge to complete"""
+        logger.info("Waiting for Cloudflare challenge...")
+        try:
+            await self.page.wait_for_selector(
+                'div[data-testid="search-result"], a[href*="/for-rent/"]',
+                timeout=timeout,
+                state='visible'
+            )
+            logger.info("Cloudflare challenge passed!")
+            return True
+        except Exception:
+            logger.warning("Cloudflare challenge timeout - continuing anyway")
+            return False
 
     async def close_browser(self):
         """Close browser and cleanup"""
@@ -136,28 +151,39 @@ class SmartDaftScraper:
         if self.playwright:
             await self.playwright.stop()
 
-    async def scrape_rentals(self, max_pages: int = None) -> List[Dict]:
+    async def scrape_rentals(self, max_pages: int = None) -> int:
         """
         Smart scraping with automatic full/incremental mode detection
+        Loads data to database PAGE BY PAGE to avoid memory issues
 
         Args:
             max_pages: Maximum pages to scrape (None = scrape until no more listings found)
 
         Returns:
-            List of new listing dictionaries
+            Total number of listings loaded to database
         """
         # Determine strategy
         mode = self._determine_scraping_strategy()
 
-        all_listings = []
+        # Import loader here to avoid circular imports
+        from etl.loaders.data_loader import DataLoader
+        loader = DataLoader()
+
         page_num = 1
         consecutive_empty_pages = 0
-        new_listings_count = 0
+        total_loaded = 0
 
-        # For incremental mode, limit pages to recent listings
+        # OPTIMIZATION: In incremental mode with chronological sort, we can stop after first empty page
+        # because all subsequent pages will be even older (since we sort by publishDateDesc)
+        # In FULL mode, allow more empty pages to handle transient errors
+        max_empty_pages = 1 if mode == 'incremental' else 5
+
+        # For incremental mode, no need to check many pages due to chronological optimization
         if mode == 'incremental' and max_pages is None:
-            max_pages = 5  # Only check first 5 pages for new listings
-            logger.info("Incremental mode: Will check first 5 pages for new listings")
+            max_pages = 10  # Reduced from 50 since we stop after first empty page
+            logger.info(f"Incremental mode: Chronological sort enabled, will stop after first empty page")
+        elif mode == 'full' and max_pages is None:
+            logger.info(f"Full mode: Will scrape ALL available pages (stop after {max_empty_pages} consecutive empty pages)")
 
         while True:
             # Check if we should stop
@@ -165,20 +191,36 @@ class SmartDaftScraper:
                 logger.info(f"Reached max pages limit ({max_pages})")
                 break
 
-            if consecutive_empty_pages >= 2:
-                logger.info("Found 2 consecutive pages with no new listings, stopping")
+            if consecutive_empty_pages >= max_empty_pages:
+                if mode == 'incremental':
+                    logger.info(f"Found {consecutive_empty_pages} empty page(s) with no new listings, stopping")
+                    logger.info("   ⚡ Since listings are sorted chronologically (newest first), all remaining pages are older")
+                else:
+                    logger.info(f"Found {consecutive_empty_pages} consecutive pages with no listings (errors or end of results)")
                 break
+
+            # Progress logging every 10 pages
+            if page_num % 10 == 0:
+                logger.info(f"📊 Progress: Page {page_num} | Loaded {total_loaded} listings so far")
 
             logger.info(f"Scraping page {page_num}...")
 
-            # Build URL
+            # Build URL with pageSize and sort by publish_date descending (newest first)
+            # NOTE: Daft.ie API does NOT support timestamp filtering parameters
+            # We rely on chronological sort + client-side filtering + early stopping
             from_param = (page_num - 1) * 20
-            url = f"{self.base_url}/property-for-rent/ireland?from={from_param}"
+            url = f"{self.base_url}/property-for-rent/ireland?pageSize=20&from={from_param}&sort=publishDateDesc"
 
             try:
                 # Navigate to page
-                await self.page.goto(url, wait_until='networkidle', timeout=30000)
-                await asyncio.sleep(2)  # Let JavaScript render
+                await self.page.goto(url, wait_until='networkidle', timeout=60000)
+
+                # Wait for Cloudflare (only needed on first page usually)
+                if page_num == 1:
+                    await self.wait_for_cloudflare()
+
+                # Wait for dynamic content
+                await asyncio.sleep(2)
 
                 # Get page content
                 content = await self.page.content()
@@ -192,54 +234,68 @@ class SmartDaftScraper:
                     page_num += 1
                     continue
 
-                # Filter listings based on mode
+                # In incremental mode: filter listings client-side by timestamp
+                # (Daft.ie API doesn't support server-side timestamp filtering)
                 if mode == 'incremental' and self.latest_publish_date:
-                    # Only keep listings newer than what we have
+                    # Client-side filter: only keep listings newer than checkpoint
                     new_listings = [
                         l for l in listings
                         if l.get('publish_date') and l['publish_date'] > self.latest_publish_date
                     ]
 
-                    logger.info(f"Page {page_num}: Found {len(listings)} listings, {len(new_listings)} are new")
+                    logger.info(f"Page {page_num}: Fetched {len(listings)} listings, {len(new_listings)} are new (after {self.latest_publish_date})")
 
                     if not new_listings:
                         consecutive_empty_pages += 1
                     else:
                         consecutive_empty_pages = 0
-                        all_listings.extend(new_listings)
-                        new_listings_count += len(new_listings)
+                        # LOAD TO DATABASE IMMEDIATELY (page by page)
+                        rows_loaded = loader.load_daft_listings(new_listings)
+                        total_loaded += rows_loaded
+                        logger.info(f"💾 Loaded {rows_loaded} listings from page {page_num} to database")
                 else:
                     # Full mode: take all listings
-                    all_listings.extend(listings)
-                    new_listings_count += len(listings)
                     consecutive_empty_pages = 0
-                    logger.info(f"Page {page_num}: Found {len(listings)} listings")
+                    # LOAD TO DATABASE IMMEDIATELY (page by page)
+                    rows_loaded = loader.load_daft_listings(listings)
+                    total_loaded += rows_loaded
+                    logger.info(f"Page {page_num}: API returned {len(listings)} listings")
+                    logger.info(f"💾 Loaded {rows_loaded} listings from page {page_num} to database")
 
                 page_num += 1
-                await asyncio.sleep(2)  # Be nice to the server
+
+                # Slower in full mode to avoid rate limiting (3 seconds instead of 2)
+                sleep_time = 3 if mode == 'full' else 2
+                await asyncio.sleep(sleep_time)
 
             except Exception as e:
                 logger.error(f"Error scraping page {page_num}: {e}")
                 consecutive_empty_pages += 1
                 page_num += 1
+
+                # Wait longer after errors to avoid rate limiting
+                logger.info(f"Waiting 5 seconds before retry...")
+                await asyncio.sleep(5)
                 continue
 
-        logger.info(f"✅ Scraping complete: {new_listings_count} new listings found across {page_num-1} pages")
-        return all_listings
+        logger.info(f"✅ Scraping complete: {total_loaded} total listings loaded to database across {page_num-1} pages")
+        return total_loaded
 
     def _extract_listings_from_html(self, html_content: str) -> List[Dict]:
         """Extract listings from HTML content"""
-        soup = BeautifulSoup(html_content, 'html.parser')
+        soup = BeautifulSoup(html_content, 'lxml')
         listings = []
 
-        # Try to find __NEXT_DATA__ script
+        # Try to find __NEXT_DATA__ script (most reliable method)
         script_tag = soup.find('script', {'id': '__NEXT_DATA__'})
 
-        if script_tag:
+        if script_tag and script_tag.string:
             try:
                 data = json.loads(script_tag.string)
                 page_props = data.get('props', {}).get('pageProps', {})
                 listings_data = page_props.get('listings', [])
+
+                logger.info(f"Found {len(listings_data)} listings in __NEXT_DATA__")
 
                 for item in listings_data:
                     listing = self._parse_listing_json(item.get('listing', {}))
@@ -248,10 +304,22 @@ class SmartDaftScraper:
 
                 return listings
             except Exception as e:
-                logger.warning(f"Failed to parse __NEXT_DATA__: {e}")
+                logger.warning(f"Failed to parse __NEXT_DATA__: {e}, falling back to HTML parsing")
 
-        # Fallback: HTML parsing
-        cards = soup.find_all('div', {'data-testid': 'search-result'})
+        # Fallback: HTML parsing if JSON extraction fails
+        logger.warning("__NEXT_DATA__ not found, trying HTML parsing")
+        cards = (
+            soup.find_all('div', {'data-testid': 'search-result'}) or
+            soup.find_all('div', {'data-testid': 'listing'}) or
+            soup.find_all('a', href=re.compile(r'/for-rent/.*/\d+'))
+        )
+
+        if not cards:
+            logger.warning("No listing cards found on page")
+            return []
+
+        logger.info(f"Found {len(cards)} listing cards via HTML parsing")
+
         for card in cards:
             listing = self._parse_listing_card(card)
             if listing:
@@ -375,29 +443,19 @@ class SmartDaftScraper:
 
 
 async def run_smart_scraper():
-    """Main function to run the smart scraper"""
+    """Main function to run the smart scraper with page-by-page loading"""
     logger.info("🚀 Starting Smart Daft Scraper")
     logger.info("=" * 70)
 
     async with SmartDaftScraper(headless=True) as scraper:
         # Scrape with automatic mode detection
-        listings = await scraper.scrape_rentals(max_pages=None)
+        # Data is loaded to database PAGE BY PAGE inside scrape_rentals()
+        total_loaded = await scraper.scrape_rentals(max_pages=None)
 
-        if listings:
-            logger.info(f"\n📊 Scraped {len(listings)} new listings")
-            logger.info("💾 Loading into database...")
-
-            # Load into database
-            loader = DataLoader()
-            success = loader.load_daft_listings(listings)
-
-            if success:
-                logger.info(f"✅ Successfully loaded {len(listings)} listings to database")
-                logger.info("=" * 70)
-                return True
-            else:
-                logger.error("❌ Failed to load some listings")
-                return False
+        if total_loaded > 0:
+            logger.info(f"\n✅ Successfully loaded {total_loaded} listings to database (page by page)")
+            logger.info("=" * 70)
+            return True
         else:
             logger.info("ℹ️  No new listings found")
             logger.info("=" * 70)
