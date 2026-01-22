@@ -62,6 +62,7 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
           cd dbt
+          dbt clean
           dbt deps
           dbt run --profiles-dir .
           dbt test --profiles-dir .
