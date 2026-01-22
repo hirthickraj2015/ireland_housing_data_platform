@@ -1,22 +1,14 @@
 {{
     config(
-        materialized='incremental',
-        unique_key='listing_key',
-        schema='marts',
-        on_schema_change='sync_all_columns'
+        materialized='table',
+        schema='marts'
     )
 }}
 
--- Incremental fact table for Daft rental listings
--- Partitioned by scrape_date for efficient updates
+-- Fact table for Daft rental listings
 
 with listings as (
     select * from {{ ref('stg_daft_listings') }}
-
-    {% if is_incremental() %}
-    -- Only process new data since last run
-    where scrape_date > (select max(scrape_date) from {{ this }})
-    {% endif %}
 ),
 
 counties as (
@@ -101,7 +93,7 @@ enriched as (
         l.missing_location_flag,
 
         -- Metadata
-        l.source,
+        l."source" as data_source,
         current_timestamp as dbt_updated_at
 
     from listings l
