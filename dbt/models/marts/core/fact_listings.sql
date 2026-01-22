@@ -6,6 +6,10 @@
 }}
 
 -- Fact table for Daft rental listings
+-- Ensures no NULL values for county/province by:
+-- 1. Using original county if available
+-- 2. Deriving county from lat/long coordinates
+-- 3. Defaulting to 'Unknown' if no location info
 
 with listings as (
     select * from {{ ref('stg_daft_listings') }}
@@ -15,20 +19,74 @@ counties as (
     select * from {{ ref('dim_county') }}
 ),
 
+-- Derive county from lat/long using approximate bounding boxes for Ireland
+listings_with_derived_county as (
+    select
+        l.*,
+        case
+            -- If county already exists, use it
+            when l.county is not null and l.county != '' then l.county
+            -- Derive from lat/long (approximate bounding boxes)
+            when l.latitude is not null and l.longitude is not null then
+                case
+                    -- Dublin: Central and greater Dublin area
+                    when l.latitude between 53.2 and 53.5 and l.longitude between -6.5 and -6.0 then 'Dublin'
+                    -- Cork: Cork city and county
+                    when l.latitude between 51.5 and 52.2 and l.longitude between -10.0 and -8.0 then 'Cork'
+                    -- Galway: Galway city and county
+                    when l.latitude between 53.0 and 53.6 and l.longitude between -10.0 and -8.0 then 'Galway'
+                    -- Limerick
+                    when l.latitude between 52.4 and 52.8 and l.longitude between -9.5 and -8.3 then 'Limerick'
+                    -- Waterford
+                    when l.latitude between 52.0 and 52.4 and l.longitude between -7.5 and -6.8 then 'Waterford'
+                    -- Kerry
+                    when l.latitude between 51.7 and 52.5 and l.longitude between -10.5 and -9.2 then 'Kerry'
+                    -- Clare
+                    when l.latitude between 52.5 and 53.2 and l.longitude between -10.0 and -8.3 then 'Clare'
+                    -- Wicklow
+                    when l.latitude between 52.8 and 53.2 and l.longitude between -6.5 and -6.0 then 'Wicklow'
+                    -- Kildare
+                    when l.latitude between 53.0 and 53.4 and l.longitude between -7.2 and -6.5 then 'Kildare'
+                    -- Meath
+                    when l.latitude between 53.4 and 53.9 and l.longitude between -7.2 and -6.2 then 'Meath'
+                    -- Louth
+                    when l.latitude between 53.7 and 54.1 and l.longitude between -6.8 and -6.0 then 'Louth'
+                    -- Wexford
+                    when l.latitude between 52.2 and 52.7 and l.longitude between -6.8 and -6.0 then 'Wexford'
+                    -- Kilkenny
+                    when l.latitude between 52.3 and 52.8 and l.longitude between -7.8 and -7.0 then 'Kilkenny'
+                    -- Tipperary
+                    when l.latitude between 52.2 and 53.0 and l.longitude between -8.5 and -7.3 then 'Tipperary'
+                    -- Mayo
+                    when l.latitude between 53.5 and 54.3 and l.longitude between -10.5 and -9.0 then 'Mayo'
+                    -- Donegal
+                    when l.latitude between 54.3 and 55.5 and l.longitude between -8.5 and -7.0 then 'Donegal'
+                    -- Sligo
+                    when l.latitude between 53.9 and 54.5 and l.longitude between -9.0 and -8.0 then 'Sligo'
+                    -- Default to Unknown if coords don't match known areas
+                    else 'Unknown'
+                end
+            -- No county and no coordinates
+            else 'Unknown'
+        end as derived_county
+    from listings l
+),
+
 enriched as (
     select
         -- Surrogate key
         {{ dbt_utils.generate_surrogate_key(['l.property_id', 'l.scrape_date']) }} as listing_key,
 
-        -- Dimensions
-        c.county_key,
+        -- Dimensions - always ensure county_key is populated
+        coalesce(c.county_key, unk.county_key) as county_key,
         l.scrape_date as date_key,
 
-        -- Property attributes
+        -- Property attributes - use derived county (never NULL)
         l.property_id,
         l.daft_shortcode,
         l.title,
-        l.county,
+        l.derived_county as county,
+        coalesce(c.province, 'Unknown') as province,
         l.property_type,
         l.bedrooms,
         l.bedroom_category,
@@ -89,15 +147,17 @@ enriched as (
 
         -- Quality flags
         l.missing_price_flag,
-        l.missing_county_flag,
+        case when l.county is null or l.county = '' then 1 else 0 end as county_was_derived,
         l.missing_location_flag,
 
         -- Metadata
         l."source" as data_source,
         current_timestamp as dbt_updated_at
 
-    from listings l
-    left join counties c on l.county = c.county_name
+    from listings_with_derived_county l
+    left join counties c on l.derived_county = c.county_name
+    -- Join to get 'Unknown' county key as fallback
+    left join counties unk on unk.county_name = 'Unknown'
 )
 
 select * from enriched
