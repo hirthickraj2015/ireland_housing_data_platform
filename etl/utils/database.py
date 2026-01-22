@@ -111,6 +111,61 @@ class DatabaseManager:
         logger.info(f"DataFrame loaded: {len(df)} rows into {schema}.{table}")
         return rows_affected
 
+    def bulk_upsert(self, df: pd.DataFrame, table: str, conflict_columns: List[str],
+                    schema: str = None) -> int:
+        """
+        Bulk upsert data with ON CONFLICT DO NOTHING to handle duplicates.
+
+        Args:
+            df: DataFrame to insert
+            table: Target table name
+            conflict_columns: Columns that form the unique constraint
+            schema: Database schema (defaults to config)
+
+        Returns:
+            Number of rows actually inserted (excluding conflicts)
+        """
+        if df.empty:
+            logger.warning("No data to upsert")
+            return 0
+
+        schema = schema or self.config.DB_SCHEMA
+        columns = list(df.columns)
+
+        # Build the INSERT query with ON CONFLICT DO NOTHING
+        col_names = ', '.join(columns)
+        placeholders = ', '.join(['%s'] * len(columns))
+        conflict_cols = ', '.join(conflict_columns)
+
+        insert_query = f"""
+            INSERT INTO {schema}.{table} ({col_names})
+            VALUES ({placeholders})
+            ON CONFLICT ({conflict_cols}) DO NOTHING
+        """
+
+        rows_inserted = 0
+        batch_size = 100  # Smaller batches for better error handling
+
+        with self.get_connection() as conn:
+            with conn.cursor() as cur:
+                for i in range(0, len(df), batch_size):
+                    batch = df.iloc[i:i + batch_size]
+                    for _, row in batch.iterrows():
+                        values = tuple(
+                            None if pd.isna(v) else v
+                            for v in row.values
+                        )
+                        try:
+                            cur.execute(insert_query, values)
+                            if cur.rowcount > 0:
+                                rows_inserted += cur.rowcount
+                        except Exception as e:
+                            logger.warning(f"Row insert failed: {e}")
+                            continue
+
+        logger.info(f"Bulk upsert: {rows_inserted}/{len(df)} rows into {schema}.{table}")
+        return rows_inserted
+
     def truncate_table(self, table: str, schema: str = None):
         """Truncate a table"""
         schema = schema or self.config.DB_SCHEMA

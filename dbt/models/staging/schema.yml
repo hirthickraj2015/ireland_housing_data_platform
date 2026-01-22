@@ -160,53 +160,16 @@ sources:
               - not_null
 
       # ========================================================================
-      # PROPERTY PRICE REGISTER
+      # PROPERTY PRICE REGISTER (Future - no active scraper)
       # ========================================================================
       - name: raw_property_sales
-        description: Property Price Register sales data
-        columns:
-          - name: id
-            description: Auto-incrementing primary key
-            tests:
-              - not_null
-              - unique
-
-          - name: date_of_sale
-            description: Date of property sale
-            tests:
-              - not_null
-
-          - name: price
-            description: Sale price in EUR
-            tests:
-              - not_null
+        description: Property Price Register sales data (table exists for future use)
 
       # ========================================================================
-      # ECB INTEREST RATES
+      # ECB INTEREST RATES (Future - no active scraper)
       # ========================================================================
       - name: raw_ecb_rates
-        description: European Central Bank interest rate data
-        columns:
-          - name: id
-            description: Auto-incrementing primary key
-            tests:
-              - not_null
-              - unique
-
-          - name: rate_type
-            description: Type of interest rate
-            tests:
-              - not_null
-
-          - name: time_period
-            description: Time period
-            tests:
-              - not_null
-
-          - name: rate_value
-            description: Interest rate value
-            tests:
-              - not_null
+        description: European Central Bank interest rate data (table exists for future use)
 
 models:
   - name: stg_daft_listings

@@ -95,49 +95,108 @@ class SmartDaftScraper:
         await self.close_browser()
 
     async def start_browser(self):
-        """Start Playwright browser"""
+        """Start Playwright browser with anti-detection settings"""
         logger.info("Starting browser...")
 
         self.playwright = await async_playwright().start()
 
+        # Use new headless mode which is harder to detect
         self.browser = await self.playwright.chromium.launch(
             headless=self.headless,
             args=[
                 '--disable-blink-features=AutomationControlled',
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-web-security',
+                '--disable-features=IsolateOrigins,site-per-process',
+                '--window-size=1920,1080',
             ]
         )
 
         self.context = await self.browser.new_context(
             viewport={'width': 1920, 'height': 1080},
-            user_agent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
-            locale='en-US',
+            user_agent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+            locale='en-IE',
             timezone_id='Europe/Dublin',
+            geolocation={'latitude': 53.3498, 'longitude': -6.2603},  # Dublin
+            permissions=['geolocation'],
+            java_script_enabled=True,
+            bypass_csp=True,
+            ignore_https_errors=True,
         )
 
+        # Add stealth scripts to avoid detection
+        await self.context.add_init_script("""
+            // Override webdriver property
+            Object.defineProperty(navigator, 'webdriver', {
+                get: () => undefined
+            });
+
+            // Override plugins
+            Object.defineProperty(navigator, 'plugins', {
+                get: () => [1, 2, 3, 4, 5]
+            });
+
+            // Override languages
+            Object.defineProperty(navigator, 'languages', {
+                get: () => ['en-IE', 'en-GB', 'en']
+            });
+
+            // Override permissions
+            const originalQuery = window.navigator.permissions.query;
+            window.navigator.permissions.query = (parameters) => (
+                parameters.name === 'notifications' ?
+                    Promise.resolve({ state: Notification.permission }) :
+                    originalQuery(parameters)
+            );
+
+            // Override chrome
+            window.chrome = { runtime: {} };
+        """)
+
         await self.context.set_extra_http_headers({
-            'Accept-Language': 'en-US,en;q=0.9',
+            'Accept-Language': 'en-IE,en-GB;q=0.9,en;q=0.8',
             'Accept-Encoding': 'gzip, deflate, br',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+            'Sec-Ch-Ua': '"Chromium";v="122", "Not(A:Brand";v="24", "Google Chrome";v="122"',
+            'Sec-Ch-Ua-Mobile': '?0',
+            'Sec-Ch-Ua-Platform': '"macOS"',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'none',
+            'Sec-Fetch-User': '?1',
+            'Upgrade-Insecure-Requests': '1',
         })
 
         self.page = await self.context.new_page()
+
+        # Set default timeouts
+        self.page.set_default_timeout(60000)
+        self.page.set_default_navigation_timeout(60000)
+
         logger.info("Browser started successfully")
 
     async def wait_for_cloudflare(self, timeout: int = 30000):
-        """Wait for Cloudflare challenge to complete"""
-        logger.info("Waiting for Cloudflare challenge...")
+        """Wait for Cloudflare challenge to complete and page content to load"""
+        logger.info("Waiting for page content to load...")
         try:
+            # Wait for any of these selectors that indicate the page has loaded
             await self.page.wait_for_selector(
-                'div[data-testid="search-result"], a[href*="/for-rent/"]',
+                'div[data-testid="search-result"], a[href*="/for-rent/"], script#__NEXT_DATA__',
                 timeout=timeout,
-                state='visible'
+                state='attached'
             )
-            logger.info("Cloudflare challenge passed!")
+            logger.info("Page content loaded successfully!")
             return True
-        except Exception:
-            logger.warning("Cloudflare challenge timeout - continuing anyway")
+        except Exception as e:
+            logger.warning(f"Page load timeout: {e}")
+            # Check if we got any content anyway
+            content = await self.page.content()
+            if '__NEXT_DATA__' in content or 'search-result' in content:
+                logger.info("Page content found despite timeout, continuing...")
+                return True
+            logger.warning("No content found, may need to retry")
             return False
 
     async def close_browser(self):
@@ -172,16 +231,17 @@ class SmartDaftScraper:
         page_num = 1
         consecutive_empty_pages = 0
         total_loaded = 0
+        max_retries_per_page = 3  # Retry same page up to 3 times on error
 
         # OPTIMIZATION: In incremental mode with chronological sort, we can stop after first empty page
         # because all subsequent pages will be even older (since we sort by publishDateDesc)
         # In FULL mode, allow more empty pages to handle transient errors
-        max_empty_pages = 1 if mode == 'incremental' else 5
+        max_empty_pages = 3 if mode == 'incremental' else 5
 
-        # For incremental mode, no need to check many pages due to chronological optimization
+        # For incremental mode, check more pages to ensure we don't miss any
         if mode == 'incremental' and max_pages is None:
-            max_pages = 10  # Reduced from 50 since we stop after first empty page
-            logger.info(f"Incremental mode: Chronological sort enabled, will stop after first empty page")
+            max_pages = 20  # Check up to 20 pages for new listings
+            logger.info(f"Incremental mode: Will check up to {max_pages} pages, stop after {max_empty_pages} consecutive empty pages")
         elif mode == 'full' and max_pages is None:
             logger.info(f"Full mode: Will scrape ALL available pages (stop after {max_empty_pages} consecutive empty pages)")
 
@@ -193,10 +253,10 @@ class SmartDaftScraper:
 
             if consecutive_empty_pages >= max_empty_pages:
                 if mode == 'incremental':
-                    logger.info(f"Found {consecutive_empty_pages} empty page(s) with no new listings, stopping")
+                    logger.info(f"Found {consecutive_empty_pages} consecutive page(s) with no new listings, stopping")
                     logger.info("   ⚡ Since listings are sorted chronologically (newest first), all remaining pages are older")
                 else:
-                    logger.info(f"Found {consecutive_empty_pages} consecutive pages with no listings (errors or end of results)")
+                    logger.info(f"Found {consecutive_empty_pages} consecutive pages with no listings (end of results)")
                 break
 
             # Progress logging every 10 pages
@@ -206,77 +266,98 @@ class SmartDaftScraper:
             logger.info(f"Scraping page {page_num}...")
 
             # Build URL with pageSize and sort by publish_date descending (newest first)
-            # NOTE: Daft.ie API does NOT support timestamp filtering parameters
-            # We rely on chronological sort + client-side filtering + early stopping
             from_param = (page_num - 1) * 20
             url = f"{self.base_url}/property-for-rent/ireland?pageSize=20&from={from_param}&sort=publishDateDesc"
 
-            try:
-                # Navigate to page
-                await self.page.goto(url, wait_until='networkidle', timeout=60000)
+            # Retry logic for the same page
+            page_success = False
+            for retry in range(max_retries_per_page):
+                try:
+                    # Navigate to page - use 'domcontentloaded' instead of 'networkidle' for faster loading
+                    await self.page.goto(url, wait_until='domcontentloaded', timeout=45000)
 
-                # Wait for Cloudflare (only needed on first page usually)
-                if page_num == 1:
-                    await self.wait_for_cloudflare()
+                    # Wait for Cloudflare challenge if needed
+                    if page_num == 1 or retry > 0:
+                        await self.wait_for_cloudflare(timeout=20000)
 
-                # Wait for dynamic content
-                await asyncio.sleep(2)
+                    # Wait for dynamic content to load
+                    await asyncio.sleep(3)
 
-                # Get page content
-                content = await self.page.content()
+                    # Get page content
+                    content = await self.page.content()
 
-                # Parse listings
-                listings = self._extract_listings_from_html(content)
+                    # Parse listings
+                    listings = self._extract_listings_from_html(content)
 
-                if not listings:
-                    logger.warning(f"No listings found on page {page_num}")
-                    consecutive_empty_pages += 1
-                    page_num += 1
-                    continue
+                    if not listings:
+                        if retry < max_retries_per_page - 1:
+                            logger.warning(f"No listings found on page {page_num}, retry {retry + 1}/{max_retries_per_page}")
+                            await asyncio.sleep(5)
+                            continue
+                        else:
+                            logger.warning(f"No listings found on page {page_num} after {max_retries_per_page} attempts")
+                            consecutive_empty_pages += 1
+                            page_success = True  # Move to next page
+                            break
 
-                # In incremental mode: filter listings client-side by timestamp
-                # (Daft.ie API doesn't support server-side timestamp filtering)
-                if mode == 'incremental' and self.latest_publish_date:
-                    # Client-side filter: only keep listings newer than checkpoint
-                    new_listings = [
-                        l for l in listings
-                        if l.get('publish_date') and l['publish_date'] > self.latest_publish_date
-                    ]
+                    # Successfully got listings
+                    page_success = True
 
-                    logger.info(f"Page {page_num}: Fetched {len(listings)} listings, {len(new_listings)} are new (after {self.latest_publish_date})")
+                    # In incremental mode: filter listings client-side by timestamp
+                    if mode == 'incremental' and self.latest_publish_date:
+                        # Client-side filter: only keep listings newer than checkpoint
+                        new_listings = [
+                            l for l in listings
+                            if l.get('publish_date') and l['publish_date'] > self.latest_publish_date
+                        ]
 
-                    if not new_listings:
-                        consecutive_empty_pages += 1
+                        logger.info(f"Page {page_num}: Fetched {len(listings)} listings, {len(new_listings)} are new (after {self.latest_publish_date})")
+
+                        if not new_listings:
+                            consecutive_empty_pages += 1
+                        else:
+                            consecutive_empty_pages = 0
+                            # LOAD TO DATABASE IMMEDIATELY (page by page)
+                            rows_loaded = loader.load_daft_listings(new_listings)
+                            total_loaded += rows_loaded
+                            logger.info(f"💾 Loaded {rows_loaded} listings from page {page_num} to database")
                     else:
+                        # Full mode: take all listings
                         consecutive_empty_pages = 0
                         # LOAD TO DATABASE IMMEDIATELY (page by page)
-                        rows_loaded = loader.load_daft_listings(new_listings)
+                        rows_loaded = loader.load_daft_listings(listings)
                         total_loaded += rows_loaded
+                        logger.info(f"Page {page_num}: Found {len(listings)} listings")
                         logger.info(f"💾 Loaded {rows_loaded} listings from page {page_num} to database")
-                else:
-                    # Full mode: take all listings
-                    consecutive_empty_pages = 0
-                    # LOAD TO DATABASE IMMEDIATELY (page by page)
-                    rows_loaded = loader.load_daft_listings(listings)
-                    total_loaded += rows_loaded
-                    logger.info(f"Page {page_num}: API returned {len(listings)} listings")
-                    logger.info(f"💾 Loaded {rows_loaded} listings from page {page_num} to database")
 
+                    break  # Success, exit retry loop
+
+                except PlaywrightTimeoutError as e:
+                    logger.error(f"Timeout on page {page_num} (attempt {retry + 1}/{max_retries_per_page}): {e}")
+                    if retry < max_retries_per_page - 1:
+                        wait_time = 10 * (retry + 1)  # Exponential backoff: 10, 20, 30 seconds
+                        logger.info(f"Waiting {wait_time} seconds before retry...")
+                        await asyncio.sleep(wait_time)
+                    else:
+                        logger.error(f"Failed to scrape page {page_num} after {max_retries_per_page} attempts, skipping")
+                        # Don't count timeout as empty page - it's an error
+                        page_success = True  # Move to next page but don't increment empty counter
+
+                except Exception as e:
+                    logger.error(f"Error scraping page {page_num} (attempt {retry + 1}/{max_retries_per_page}): {e}")
+                    if retry < max_retries_per_page - 1:
+                        wait_time = 10 * (retry + 1)
+                        logger.info(f"Waiting {wait_time} seconds before retry...")
+                        await asyncio.sleep(wait_time)
+                    else:
+                        logger.error(f"Failed to scrape page {page_num} after {max_retries_per_page} attempts, skipping")
+                        page_success = True
+
+            if page_success:
                 page_num += 1
-
-                # Slower in full mode to avoid rate limiting (3 seconds instead of 2)
+                # Delay between pages to avoid rate limiting
                 sleep_time = 3 if mode == 'full' else 2
                 await asyncio.sleep(sleep_time)
-
-            except Exception as e:
-                logger.error(f"Error scraping page {page_num}: {e}")
-                consecutive_empty_pages += 1
-                page_num += 1
-
-                # Wait longer after errors to avoid rate limiting
-                logger.info(f"Waiting 5 seconds before retry...")
-                await asyncio.sleep(5)
-                continue
 
         logger.info(f"✅ Scraping complete: {total_loaded} total listings loaded to database across {page_num-1} pages")
         return total_loaded

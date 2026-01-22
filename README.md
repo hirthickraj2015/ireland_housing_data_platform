@@ -10,7 +10,7 @@ This platform collects, transforms, and visualizes Irish housing market data to 
 - **Data Warehouse** with medallion architecture (Bronze → Silver → Gold)
 - **Star Schema** modeling for analytics
 - **Interactive Dashboards** in Power BI
-- **Data Quality** enforcement with 46+ automated tests
+- **Data Quality** enforcement with 37 automated dbt tests
 
 ## Quick Start
 
@@ -42,13 +42,13 @@ cd dbt && dbt run --profiles-dir . && dbt test --profiles-dir .
 ## Architecture
 
 ```
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                         IRELAND HOUSING DATA PLATFORM                         │
-├──────────────────────────────────────────────────────────────────────────────┤
-│                                                                              │
-│  DATA SOURCES              ETL LAYER                  DATA WAREHOUSE         │
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         IRELAND HOUSING DATA PLATFORM                       │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  DATA SOURCES              ETL LAYER                  DATA WAREHOUSE        │
 │  ───────────              ─────────                  ──────────────         │
-│                                                                              │
+│                                                                             │
 │  ┌─────────────┐      ┌─────────────────┐      ┌─────────────────────────┐  │
 │  │  Daft.ie    │─────▶│  Smart Daft     │      │      BRONZE LAYER       │  │
 │  │  Rentals    │      │  Scraper        │─────▶│  (raw_daft_listings)    │  │
@@ -87,8 +87,8 @@ cd dbt && dbt run --profiles-dir . && dbt test --profiles-dir .
 │                                                │  - fact_economic_ind... │  │
 │                                                │  - fact_price_movements │  │
 │                                                └─────────────────────────┘  │
-│                                                                              │
-└──────────────────────────────────────────────────────────────────────────────┘
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ## Tech Stack
@@ -115,12 +115,12 @@ cd dbt && dbt run --profiles-dir . && dbt test --profiles-dir .
 ### 2. CSO Ireland Official Statistics
 - **Method:** PxStat REST API (JSON-stat 2.0 format)
 - **Datasets:**
-  | Code | Dataset | Description | Years |
-  |------|---------|-------------|-------|
+  | Code  | Dataset    | Description              | Years     |
+  |-------|------------|--------------------------|-----------|
   | RIA02 | Rent Index | RTB Average Monthly Rent | 2008-2024 |
-  | CPM01 | CPI | Consumer Price Index | 1975-2024 |
-  | PEA01 | Population | Population Estimates | 1950-2024 |
-  | CIA01 | Income | County Household Income | 2000-2022 |
+  | CPM01 | CPI        | Consumer Price Index     | 1975-2024 |
+  | PEA01 | Population | Population Estimates     | 1950-2024 |
+  | CIA01 | Income     | County Household Income  | 2000-2022 |
 
 ## Data Warehouse Design
 
@@ -128,7 +128,8 @@ cd dbt && dbt run --profiles-dir . && dbt test --profiles-dir .
 
 **Bronze Layer (Raw Data)**
 - Exact copy of source data with minimal transformation
-- 7 tables: `raw_daft_listings`, `raw_cso_rent`, `raw_cso_cpi`, `raw_cso_population`, `raw_cso_income`, `raw_property_sales`, `raw_ecb_rates`
+- 5 active tables: `raw_daft_listings`, `raw_cso_rent`, `raw_cso_cpi`, `raw_cso_population`, `raw_cso_income`
+- 2 future tables: `raw_property_sales`, `raw_ecb_rates` (schema ready, scrapers planned)
 
 **Silver Layer (Cleaned & Validated)**
 - Standardized column names and data types
@@ -259,12 +260,12 @@ make all            # Run ETL + dbt
 The Power BI dashboard (`powerbi/ireland_rent_analysis.pbix`) connects directly to the Gold layer and provides:
 
 ### Key Metrics (KPIs)
-| Metric | Description |
-|--------|-------------|
-| Total Listings | Count of active rental properties |
+| Metric              | Description                                   |
+|---------------------|-----------------------------------------------|
+| Total Listings      | Count of active rental properties             |
 | Median Monthly Rent | Middle market rent (less skewed than average) |
-| Dublin Premium % | How much more Dublin costs vs national average |
-| Data Quality Score | % of listings with images AND BER rating |
+| Dublin Premium %    | How much more Dublin costs vs national average|
+| Data Quality Score  | % of listings with images AND BER rating      |
 
 ### Dashboard Pages
 1. **Executive Overview** - KPI cards, price histogram, top 5 counties, property type distribution
@@ -280,7 +281,7 @@ The Power BI dashboard (`powerbi/ireland_rent_analysis.pbix`) connects directly 
 
 ## Data Quality
 
-### Automated Tests (46+ dbt tests)
+### Automated Tests (37 dbt tests)
 - **Uniqueness:** Primary keys, natural keys
 - **Referential Integrity:** Foreign key relationships
 - **Not Null:** Required fields
@@ -350,10 +351,11 @@ The GitHub Actions workflow (`.github/workflows/daily_etl.yml`) runs automatical
 - **Steps:**
   1. Checkout repository
   2. Setup Python 3.11
-  3. Install dependencies
-  4. Run ETL pipeline (`python run_smart_etl.py`)
-  5. Run dbt models and tests
-  6. Upload logs as artifacts
+  3. Install Python dependencies
+  4. Install Playwright browsers (chromium)
+  5. Run ETL pipeline (`python run_smart_etl.py`)
+  6. Install and run dbt models and tests
+  7. Upload logs as artifacts
 
 ### Manual Trigger
 ```bash
@@ -416,13 +418,13 @@ dbt run --profiles-dir . --full-refresh
 
 ## Performance Benchmarks
 
-| Operation | Time | Volume |
-|-----------|------|--------|
-| Daft Full Load | 30-45 min | ~10,000 listings |
-| Daft Incremental | 2-5 min | ~200 new listings |
-| CSO Full Load | ~90 sec | ~320,000 records |
-| dbt Run (all models) | ~45 sec | 11 models |
-| Warehouse Deploy | ~30 sec | 4 dims + 5 facts |
+| Operation           | Time      | Volume            |
+|---------------------|-----------|-------------------|
+| Daft Full Load      | 30-45 min | ~10,000 listings  |
+| Daft Incremental    | 2-5 min.  | ~200 new listings |
+| CSO Full Load       | ~90 sec   | ~320,000 records  |
+| dbt Run (all models)| ~45 sec   | 11 models         |
+| Warehouse Deploy    | ~30 sec   | 4 dims + 5 facts  |
 
 ## Contributing
 

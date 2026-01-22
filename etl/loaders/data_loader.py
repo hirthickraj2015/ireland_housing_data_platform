@@ -128,11 +128,12 @@ class DataLoader:
         # Select only the required columns in correct order
         df = df[required_columns]
 
-        # Load to database
-        rows_loaded = self.db.load_dataframe(
+        # Load to database with proper conflict handling
+        # Uses ON CONFLICT DO NOTHING to skip duplicates
+        rows_loaded = self.db.bulk_upsert(
             df=df,
             table='raw_daft_listings',
-            if_exists='append'
+            conflict_columns=['property_id', 'publish_date']
         )
 
         logger.info(f"Loaded {rows_loaded} Daft listings with all 38 fields to raw_daft_listings")

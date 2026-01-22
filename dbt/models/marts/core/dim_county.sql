@@ -16,13 +16,6 @@ with daft_counties as (
         and county != ''
 ),
 
-sales_counties as (
-    select distinct county
-    from {{ source('raw', 'raw_property_sales') }}
-    where county is not null
-        and county != ''
-),
-
 cso_rent_counties as (
     select distinct county
     from {{ ref('stg_cso_rent') }}
@@ -39,8 +32,6 @@ cso_income_counties as (
 
 all_counties as (
     select county from daft_counties
-    union
-    select county from sales_counties
     union
     select county from cso_rent_counties
     union

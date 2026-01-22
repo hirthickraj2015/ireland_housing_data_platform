@@ -33,6 +33,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Install Playwright browsers
+        run: |
+          playwright install chromium
+          playwright install-deps chromium
+
       - name: Run ETL Pipeline
         env:
           DB_HOST: ${{ secrets.DB_HOST }}
