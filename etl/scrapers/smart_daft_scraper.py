@@ -399,7 +399,7 @@ class SmartDaftScraper:
                 'title': card.get_text(strip=True)[:200] if card else None,
                 'scraped_at': datetime.now().isoformat()
             }
-        except:
+        except Exception:
             return None
 
     def _parse_price(self, price_text) -> Optional[float]:
@@ -409,7 +409,7 @@ class SmartDaftScraper:
         try:
             price_str = str(price_text).replace('€', '').replace(',', '').strip()
             return float(re.sub(r'[^\d.]', '', price_str))
-        except:
+        except (ValueError, TypeError):
             return None
 
     def _parse_number(self, text) -> Optional[int]:
@@ -418,7 +418,7 @@ class SmartDaftScraper:
             return None
         try:
             return int(re.sub(r'[^\d]', '', str(text)))
-        except:
+        except (ValueError, TypeError):
             return None
 
     def _extract_county(self, title: str) -> Optional[str]:

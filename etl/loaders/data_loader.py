@@ -527,56 +527,6 @@ class DataLoader:
         logger.info(f"Loaded {rows_loaded} records to raw_cso_income")
         return rows_loaded
 
-    def load_property_sales(self, df: pd.DataFrame) -> int:
-        """
-        Load Property Price Register data
-
-        Args:
-            df: DataFrame with property sale data
-
-        Returns:
-            Number of rows inserted
-        """
-        if df.empty:
-            logger.warning("No property sales data to load")
-            return 0
-
-        logger.info(f"Loading {len(df)} property sale records")
-
-        rows_loaded = self.db.load_dataframe(
-            df=df,
-            table='raw_property_sales',
-            if_exists='append'
-        )
-
-        logger.info(f"Loaded {rows_loaded} records to raw_property_sales")
-        return rows_loaded
-
-    def load_ecb_rates(self, df: pd.DataFrame) -> int:
-        """
-        Load ECB interest rate data
-
-        Args:
-            df: DataFrame with interest rate data
-
-        Returns:
-            Number of rows inserted
-        """
-        if df.empty:
-            logger.warning("No ECB rate data to load")
-            return 0
-
-        logger.info(f"Loading {len(df)} ECB rate records")
-
-        rows_loaded = self.db.load_dataframe(
-            df=df,
-            table='raw_ecb_rates',
-            if_exists='append'
-        )
-
-        logger.info(f"Loaded {rows_loaded} records to raw_ecb_rates")
-        return rows_loaded
-
     def load_all_data(self, data_dict: Dict[str, Any]) -> Dict[str, int]:
         """
         Load all datasets from a dictionary
@@ -616,18 +566,6 @@ class DataLoader:
         if 'cso_population' in data_dict:
             results['cso_population'] = self.load_cso_population(
                 data_dict['cso_population']
-            )
-
-        # Load Property Sales
-        if 'property_sales' in data_dict:
-            results['property_sales'] = self.load_property_sales(
-                data_dict['property_sales']
-            )
-
-        # Load ECB Rates
-        if 'ecb_rates' in data_dict:
-            results['ecb_rates'] = self.load_ecb_rates(
-                data_dict['ecb_rates']
             )
 
         total_rows = sum(results.values())

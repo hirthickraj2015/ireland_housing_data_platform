@@ -19,13 +19,27 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Database configuration from environment
+# Load from .env file if present
+from dotenv import load_dotenv
+load_dotenv()
+
 DB_CONFIG = {
-    'host': os.getenv('DB_HOST', 'ep-nameless-cherry-abn7j2cl-pooler.eu-west-2.aws.neon.tech'),
+    'host': os.getenv('DB_HOST'),
     'port': os.getenv('DB_PORT', '5432'),
-    'dbname': os.getenv('DB_NAME', 'neondb'),
-    'user': os.getenv('DB_USER', 'neondb_owner'),
-    'password': os.getenv('DB_PASSWORD', 'npg_e3y6gIFNHsaD')
+    'dbname': os.getenv('DB_NAME'),
+    'user': os.getenv('DB_USER'),
+    'password': os.getenv('DB_PASSWORD')
 }
+
+# Validate required configuration
+def validate_db_config():
+    missing = [k for k, v in DB_CONFIG.items() if v is None and k != 'port']
+    if missing:
+        logger.error(f"Missing required database configuration: {', '.join(missing)}")
+        logger.error("Please set environment variables or create a .env file")
+        sys.exit(1)
+
+validate_db_config()
 
 # SQL scripts to execute in order
 SQL_SCRIPTS = [
@@ -153,7 +167,7 @@ def get_layer_stats(conn):
         try:
             cur.execute(f"SELECT COUNT(*) as count FROM {table}")
             bronze_count += cur.fetchone()['count']
-        except:
+        except Exception:
             pass
 
     stats['bronze'] = bronze_count
@@ -162,7 +176,7 @@ def get_layer_stats(conn):
     try:
         cur.execute("SELECT COUNT(*) as count FROM silver.stg_daft_listings")
         stats['silver_daft'] = cur.fetchone()['count']
-    except:
+    except Exception:
         stats['silver_daft'] = 0
 
     # Gold dimensions
@@ -172,7 +186,7 @@ def get_layer_stats(conn):
         try:
             cur.execute(f"SELECT COUNT(*) as count FROM gold.{table}")
             gold_dim_count += cur.fetchone()['count']
-        except:
+        except Exception:
             pass
 
     stats['gold_dimensions'] = gold_dim_count
@@ -185,7 +199,7 @@ def get_layer_stats(conn):
         try:
             cur.execute(f"SELECT COUNT(*) as count FROM gold.{table}")
             gold_fact_count += cur.fetchone()['count']
-        except:
+        except Exception:
             pass
 
     stats['gold_facts'] = gold_fact_count

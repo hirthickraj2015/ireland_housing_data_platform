@@ -42,7 +42,7 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_SCHEMA: ${{ secrets.DB_SCHEMA }}
         run: |
-          python -m etl.main
+          python run_smart_etl.py
 
       - name: Install dbt
         run: |

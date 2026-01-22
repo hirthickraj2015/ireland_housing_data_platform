@@ -93,3 +93,4 @@ credentials.json
 tmp/
 temp/
 *.tmp
+.claude

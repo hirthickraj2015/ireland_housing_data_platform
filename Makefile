@@ -22,7 +22,7 @@ setup-db:
 	@echo "Make sure to run: psql -h $$DB_HOST -U $$DB_USER -d $$DB_NAME -f sql/create_raw_tables.sql"
 
 run-etl:
-	python -m etl.main
+	python run_smart_etl.py
 
 run-dbt:
 	cd dbt && dbt run --profiles-dir . && dbt test --profiles-dir .
