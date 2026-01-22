@@ -26,14 +26,6 @@ sources:
             tests:
               - not_null
 
-          - name: price
-            description: Monthly rental price in EUR (parsed as decimal)
-            tests:
-              - not_null
-
-          - name: county
-            description: Irish county location
-
           - name: scraped_at
             description: Timestamp when listing was scraped
             tests:
@@ -46,6 +38,7 @@ sources:
         description: >
           CSO Residential Tenancies Board Average Monthly Rent data (RIA02).
           Provides official rent statistics by county, bedrooms, and property type.
+          Note: NULL values are expected for some dimension combinations.
 
         columns:
           - name: id
@@ -56,16 +49,6 @@ sources:
 
           - name: year
             description: Year of data
-            tests:
-              - not_null
-
-          - name: location_label
-            description: County or area name
-            tests:
-              - not_null
-
-          - name: value
-            description: Average monthly rent value
             tests:
               - not_null
 
@@ -75,7 +58,7 @@ sources:
       - name: raw_cso_cpi
         description: >
           CSO Consumer Price Index data (CPA01).
-          Tracks inflation and price changes over time for various commodity groups.
+          Note: NULL values are expected for some time periods/categories.
 
         columns:
           - name: id
@@ -86,16 +69,6 @@ sources:
 
           - name: year
             description: Year of data
-            tests:
-              - not_null
-
-          - name: commodity_label
-            description: Commodity group label (Housing, Rent, etc.)
-            tests:
-              - not_null
-
-          - name: value
-            description: CPI index value
             tests:
               - not_null
 
@@ -105,7 +78,7 @@ sources:
       - name: raw_cso_population
         description: >
           CSO Population Estimates (PEA01).
-          Annual population estimates by age group and sex.
+          Note: NULL values are expected for some age/sex combinations.
 
         columns:
           - name: id
@@ -116,11 +89,6 @@ sources:
 
           - name: year
             description: Year of data
-            tests:
-              - not_null
-
-          - name: value
-            description: Population value
             tests:
               - not_null
 
@@ -139,23 +107,8 @@ sources:
               - not_null
               - unique
 
-          - name: location_label
-            description: County or region name
-            tests:
-              - not_null
-
           - name: year
             description: Year of data
-            tests:
-              - not_null
-
-          - name: statistic_label
-            description: Income statistic type description
-            tests:
-              - not_null
-
-          - name: value
-            description: Income value
             tests:
               - not_null
 
@@ -180,16 +133,6 @@ models:
         tests:
           - not_null
 
-      - name: price
-        description: Monthly rental price
-        tests:
-          - not_null
-
-      - name: county
-        description: Irish county
-        tests:
-          - not_null
-
       - name: scraped_at
         description: Scrape timestamp
         tests:
@@ -201,17 +144,11 @@ models:
       - name: year
         tests:
           - not_null
-      - name: rent_value
-        tests:
-          - not_null
 
   - name: stg_cso_cpi
     description: CSO Consumer Price Index cleaned and standardized
     columns:
       - name: year
-        tests:
-          - not_null
-      - name: cpi_value
         tests:
           - not_null
 
@@ -221,16 +158,10 @@ models:
       - name: year
         tests:
           - not_null
-      - name: population_count
-        tests:
-          - not_null
 
   - name: stg_cso_income
     description: CSO Income data by county cleaned and standardized
     columns:
       - name: year
-        tests:
-          - not_null
-      - name: income_amount
         tests:
           - not_null

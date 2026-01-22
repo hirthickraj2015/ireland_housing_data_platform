@@ -10,7 +10,7 @@ This platform collects, transforms, and visualizes Irish housing market data to 
 - **Data Warehouse** with medallion architecture (Bronze → Silver → Gold)
 - **Star Schema** modeling for analytics
 - **Interactive Dashboards** in Power BI
-- **Data Quality** enforcement with 37 automated dbt tests
+- **Data Quality** enforcement with automated dbt tests
 
 ## Quick Start
 
@@ -281,7 +281,7 @@ The Power BI dashboard (`powerbi/ireland_rent_analysis.pbix`) connects directly 
 
 ## Data Quality
 
-### Automated Tests (37 dbt tests)
+### Automated Tests
 - **Uniqueness:** Primary keys, natural keys
 - **Referential Integrity:** Foreign key relationships
 - **Not Null:** Required fields
