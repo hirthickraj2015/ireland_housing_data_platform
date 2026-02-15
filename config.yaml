@@ -1,0 +1,120 @@
+# Config file - please see comments and readme for further documentation on how to use
+
+---
+# Set filepaths for the project.
+    # Datasets should be uploaded to the 'data' folder of the project and then added to the gitignore file
+    # If you are having trouble loading data, please try changing your dir using the "os.chdir()" command
+file_locations:
+
+    path_in: '/reusable-arr-reporting-framework/data/sample_input.csv'
+    waterfall_path_out: '/reusable-arr-reporting-framework/data/outputs/waterfall_output.csv'
+    flat_path_out: '/reusable-arr-reporting-framework/data/outputs/flat_output.csv'
+
+## Define all constants that will be used throughout the script
+# If you want to do a classic Snowball, looking across a static time period of x months, choose 'number_of_months'
+    # The time period can be set using the month_period variable, with 12 the usual amount
+# If you want to do a YTD or QTD snowball (starting from Jan or Q1/2/3/4), choose these options
+# If you would like to do this but geared to the company's financial year, choose FYTD or FQTD
+    # To do this, set the month in which a company's FY starts. Eg for JMAN, this is September so the value should be 9
+constants:
+    crb_type: 'number_of_months' # Must be one of number_of_months, YTD, QTD, FYTD, FQTD
+    month_period: 1
+    fy_start_month: 1
+
+    # Set the product granularity for upsell/cross-sell. This will normally be product_id or product_family
+    # Eg if 'product_family', purchase of a second product in the same family will be counted as upsell, not cross-sell
+    product_level:
+    - 'product_family'
+
+
+# Define column headers here to keep naming consistent throughout the project
+    # In order for the script to work, we need consistently named columns, and we set to a standard template here
+column_headers:
+    # Please change the FIRST value of the dictionary pair to be the name of your input column
+    # Format: input_column_name: 'standard_column_name'
+    initial_mapping:
+        customer_id: 'customer_id'
+        customer_name: 'customer_name'
+        product_id: 'product_id'
+        product_name: 'product_name'
+        product_sub-family: 'product_family'
+        product_family: 'product_group'
+        month: 'month'
+        arr: 'arr'
+        is_recurring: 'is_recurring'
+        currency: 'currency'
+
+    # Set required columns without which the Snowball will not work. This should not require many changes
+    required_columns:
+    - 'customer_id'
+    - 'product_family'
+    - 'product_id'
+    - 'month'
+    - 'arr'
+
+    # Select columns you would like to be in your primary key.
+    # This is a unique identifier and there should not be duplicates (except for by month)
+    primary_key_columns:
+    - 'customer_id'
+    - 'customer_name'
+    - 'product_family'
+    - 'product_group'
+    - 'product_id'
+    - 'product_name'
+    - 'is_recurring'
+    - 'currency'
+    # - 'subsidiary' ## add this in when running for France
+
+    # Please rename the left-hand side for any dimension columns you would like to see in the final output
+    # Dimensions will be output in the final output as 'Dimension 1' etc... These can be renamed in Tableau
+    dimension_columns:
+        country: 'Dimension1'
+        region: 'Dimension2'
+        segment: 'Dimension3'
+        Dimension4: 'Dimension4'
+        Dimension5: 'Dimension5'
+        Dimension6: 'Dimension6'
+        Dimension7: 'Dimension7'
+        Dimension8: 'Dimension8'
+
+    # Columns you would like to keep in the waterfall output (excludes primary key columns and dimension columns)
+    # Columns not listed here will not be in the waterfall
+    tableau_id_columns:
+    - 'primary_key'
+    - 'Customer_ID'
+    - 'Product_ID'
+    - 'Month'
+    - 'Customer_name'
+    - 'Product_family'
+    - 'Customer_Cohort_Year'
+    - 'Customer_Tenure'
+
+    # Do not change unless you have an extremely good reason
+    # Mapping corresponds precisely to the Tableau output, and changing them will make it harder to load the output
+    tableau_col_mapping:
+        customer_id: 'Customer_ID'
+        product_id: 'Product_ID'
+        is_recurring: 'IsRecurring'
+        month: 'Month'
+        customer_start_date: 'Customer_Join_Month'
+        customer_churn_date: 'Customer_Churn_Month'
+        product_start_date: 'Product_Join_Month'
+        product_end_date: 'Product_Last_Month'
+        product_churn_date: 'Product_Churn_Month'
+        nrr: 'NRR'
+        grr: 'GRR'
+        arr: 'ARR'
+        arr_bop: 'ARR_BOP'
+        arr_change: 'ARR_vs_prior_period'
+        customer_churn_delta: 'Delta_Churn'
+        cross_sell_delta: 'Delta_Cross_Sell'
+        product_churn_delta: 'Delta_Downgrade'
+        downsell_delta: 'Delta_Downsell'
+        upsell_delta: 'Delta_Upsell'
+        new_customer_delta: 'Delta_New_Customer'
+        customer_churn_flag: 'Flag_Churn'
+        cross_sell_flag: 'Flag_Cross_Sell'
+        product_churn_flag: 'Flag_Downgrade'
+        downsell_flag: 'Flag_Downsell'
+        upsell_flag: 'Flag_Upsell'
+        new_customer_flag: 'Flag_New_Customer'

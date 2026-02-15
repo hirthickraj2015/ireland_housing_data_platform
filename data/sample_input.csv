@@ -1,0 +1,245 @@
+customer_id,customer_name,product_family,product_sub-family,product_id,product_name,month,arr,is_recurring,currency,country,region,segment
+CUST-00001,Customer 1,Analytics,Analytics - BI,PROD-0008,Report Builder,01/01/2024,106054.73,1,GBP,UK,Europe,Enterprise
+CUST-00001,Customer 1,Analytics,Analytics - BI,PROD-0008,Report Builder,01/02/2024,119892.28,1,GBP,UK,Europe,Enterprise
+CUST-00001,Customer 1,Analytics,Analytics - BI,PROD-0008,Report Builder,01/03/2024,115183.18,1,GBP,UK,Europe,Enterprise
+CUST-00001,Customer 1,Analytics,Analytics - BI,PROD-0008,Report Builder,01/04/2024,119938.57,1,GBP,UK,Europe,Enterprise
+CUST-00001,Customer 1,Analytics,Analytics - BI,PROD-0008,Report Builder,01/05/2024,112656.32,1,GBP,UK,Europe,Enterprise
+CUST-00001,Customer 1,Analytics,Analytics - BI,PROD-0008,Report Builder,01/06/2024,116201.65,1,GBP,UK,Europe,Enterprise
+CUST-00001,Customer 1,Analytics,Analytics - BI,PROD-0008,Report Builder,01/07/2024,111137.67,1,GBP,UK,Europe,Enterprise
+CUST-00001,Customer 1,Analytics,Analytics - BI,PROD-0008,Report Builder,01/08/2024,125660.31,1,GBP,UK,Europe,Enterprise
+CUST-00001,Customer 1,Analytics,Analytics - BI,PROD-0008,Report Builder,01/09/2024,106025.04,1,GBP,UK,Europe,Enterprise
+CUST-00001,Customer 1,Analytics,Analytics - BI,PROD-0008,Report Builder,01/10/2024,114144.0,1,GBP,UK,Europe,Enterprise
+CUST-00002,Customer 2,Analytics,Analytics - Dashboards,PROD-0002,Data Explorer,01/01/2024,80021.66,1,EUR,France,Europe,Mid-Market
+CUST-00002,Customer 2,Analytics,Analytics - Dashboards,PROD-0002,Data Explorer,01/02/2024,74191.23,1,EUR,France,Europe,Mid-Market
+CUST-00002,Customer 2,Analytics,Analytics - Dashboards,PROD-0002,Data Explorer,01/03/2024,79362.58,1,EUR,France,Europe,Mid-Market
+CUST-00002,Customer 2,Analytics,Analytics - Dashboards,PROD-0002,Data Explorer,01/04/2024,89352.8,1,EUR,France,Europe,Mid-Market
+CUST-00002,Customer 2,Analytics,Analytics - Dashboards,PROD-0002,Data Explorer,01/05/2024,81760.47,1,EUR,France,Europe,Mid-Market
+CUST-00003,Customer 3,Security,Security - Compliance,PROD-0001,Identity Manager,01/11/2024,169626.87,1,AUD,UK,Europe,Enterprise
+CUST-00003,Customer 3,Security,Security - Compliance,PROD-0001,Identity Manager,01/12/2024,163985.73,1,AUD,UK,Europe,Enterprise
+CUST-00003,Customer 3,Security,Security - Compliance,PROD-0001,Identity Manager,01/01/2025,190162.54,1,AUD,UK,Europe,Enterprise
+CUST-00003,Customer 3,Security,Security - Compliance,PROD-0001,Identity Manager,01/02/2025,190074.73,1,AUD,UK,Europe,Enterprise
+CUST-00003,Customer 3,Analytics,Analytics - Dashboards,PROD-0002,Data Explorer,01/11/2024,393486.59,1,AUD,UK,Europe,Enterprise
+CUST-00003,Customer 3,Analytics,Analytics - Dashboards,PROD-0002,Data Explorer,01/12/2024,361956.09,1,AUD,UK,Europe,Enterprise
+CUST-00003,Customer 3,Analytics,Analytics - Dashboards,PROD-0002,Data Explorer,01/01/2025,402728.65,1,AUD,UK,Europe,Enterprise
+CUST-00003,Customer 3,Analytics,Analytics - Dashboards,PROD-0002,Data Explorer,01/02/2025,419730.2,1,AUD,UK,Europe,Enterprise
+CUST-00003,Customer 3,Analytics,Analytics - Dashboards,PROD-0002,Data Explorer,01/03/2025,393485.11,1,AUD,UK,Europe,Enterprise
+CUST-00003,Customer 3,Analytics,Analytics - Dashboards,PROD-0002,Data Explorer,01/04/2025,369224.45,1,AUD,UK,Europe,Enterprise
+CUST-00003,Customer 3,Analytics,Analytics - Dashboards,PROD-0002,Data Explorer,01/05/2025,382975.57,1,AUD,UK,Europe,Enterprise
+CUST-00003,Customer 3,Analytics,Analytics - Dashboards,PROD-0002,Data Explorer,01/06/2025,366288.66,1,AUD,UK,Europe,Enterprise
+CUST-00003,Customer 3,Analytics,Analytics - Dashboards,PROD-0002,Data Explorer,01/07/2025,428517.46,1,AUD,UK,Europe,Enterprise
+CUST-00003,Customer 3,Analytics,Analytics - Dashboards,PROD-0002,Data Explorer,01/08/2025,426076.42,1,AUD,UK,Europe,Enterprise
+CUST-00003,Customer 3,Analytics,Analytics - Dashboards,PROD-0002,Data Explorer,01/09/2025,425766.78,1,AUD,UK,Europe,Enterprise
+CUST-00003,Customer 3,Automation,Automation - RPA,PROD-0005,Process Bot,01/11/2024,177046.19,1,AUD,UK,Europe,Enterprise
+CUST-00003,Customer 3,Automation,Automation - RPA,PROD-0005,Process Bot,01/12/2024,212679.75,1,AUD,UK,Europe,Enterprise
+CUST-00003,Customer 3,Automation,Automation - RPA,PROD-0005,Process Bot,01/01/2025,210706.29,1,AUD,UK,Europe,Enterprise
+CUST-00003,Customer 3,Automation,Automation - RPA,PROD-0005,Process Bot,01/02/2025,208862.91,1,AUD,UK,Europe,Enterprise
+CUST-00003,Customer 3,Automation,Automation - RPA,PROD-0005,Process Bot,01/03/2025,188329.78,1,AUD,UK,Europe,Enterprise
+CUST-00003,Customer 3,Automation,Automation - RPA,PROD-0005,Process Bot,01/04/2025,178552.37,1,AUD,UK,Europe,Enterprise
+CUST-00003,Customer 3,Automation,Automation - RPA,PROD-0005,Process Bot,01/05/2025,210678.39,1,AUD,UK,Europe,Enterprise
+CUST-00003,Customer 3,Automation,Automation - RPA,PROD-0005,Process Bot,01/06/2025,213379.04,1,AUD,UK,Europe,Enterprise
+CUST-00003,Customer 3,Automation,Automation - RPA,PROD-0005,Process Bot,01/07/2025,179638.6,1,AUD,UK,Europe,Enterprise
+CUST-00003,Customer 3,Automation,Automation - RPA,PROD-0005,Process Bot,01/08/2025,195321.42,1,AUD,UK,Europe,Enterprise
+CUST-00003,Customer 3,Automation,Automation - RPA,PROD-0005,Process Bot,01/09/2025,178994.54,1,AUD,UK,Europe,Enterprise
+CUST-00003,Customer 3,Automation,Automation - RPA,PROD-0005,Process Bot,01/10/2025,206079.07,1,AUD,UK,Europe,Enterprise
+CUST-00004,Customer 4,Security,Security - Compliance,PROD-0003,Threat Detection,01/01/2024,124995.14,1,USD,Japan,APAC,Enterprise
+CUST-00004,Customer 4,Security,Security - Compliance,PROD-0003,Threat Detection,01/02/2024,126957.21,1,USD,Japan,APAC,Enterprise
+CUST-00004,Customer 4,Security,Security - Compliance,PROD-0003,Threat Detection,01/03/2024,135851.86,1,USD,Japan,APAC,Enterprise
+CUST-00004,Customer 4,Security,Security - Compliance,PROD-0003,Threat Detection,01/04/2024,134970.53,1,USD,Japan,APAC,Enterprise
+CUST-00004,Customer 4,Security,Security - Compliance,PROD-0003,Threat Detection,01/05/2024,130653.39,1,USD,Japan,APAC,Enterprise
+CUST-00004,Customer 4,Security,Security - Compliance,PROD-0003,Threat Detection,01/06/2024,129027.51,1,USD,Japan,APAC,Enterprise
+CUST-00004,Customer 4,Security,Security - Compliance,PROD-0003,Threat Detection,01/07/2024,129601.35,1,USD,Japan,APAC,Enterprise
+CUST-00004,Customer 4,Security,Security - Compliance,PROD-0003,Threat Detection,01/08/2024,121795.94,1,USD,Japan,APAC,Enterprise
+CUST-00004,Customer 4,Security,Security - Compliance,PROD-0003,Threat Detection,01/09/2024,128575.51,1,USD,Japan,APAC,Enterprise
+CUST-00004,Customer 4,Security,Security - Compliance,PROD-0003,Threat Detection,01/10/2024,121160.18,1,USD,Japan,APAC,Enterprise
+CUST-00004,Customer 4,Security,Security - Compliance,PROD-0003,Threat Detection,01/11/2024,134242.11,1,USD,Japan,APAC,Enterprise
+CUST-00005,Customer 5,Analytics,Analytics - Dashboards,PROD-0002,Data Explorer,01/04/2024,41141.72,1,EUR,UK,Europe,Mid-Market
+CUST-00005,Customer 5,Analytics,Analytics - Dashboards,PROD-0002,Data Explorer,01/05/2024,38245.53,1,EUR,UK,Europe,Mid-Market
+CUST-00005,Customer 5,Analytics,Analytics - Dashboards,PROD-0002,Data Explorer,01/06/2024,38165.51,1,EUR,UK,Europe,Mid-Market
+CUST-00005,Customer 5,Analytics,Analytics - Dashboards,PROD-0002,Data Explorer,01/07/2024,36958.95,1,EUR,UK,Europe,Mid-Market
+CUST-00005,Customer 5,Security,Security - Firewall,PROD-0004,Identity Manager,01/04/2024,33086.32,1,EUR,UK,Europe,Mid-Market
+CUST-00005,Customer 5,Security,Security - Firewall,PROD-0004,Identity Manager,01/05/2024,32806.07,1,EUR,UK,Europe,Mid-Market
+CUST-00005,Customer 5,Security,Security - Firewall,PROD-0004,Identity Manager,01/06/2024,27978.0,1,EUR,UK,Europe,Mid-Market
+CUST-00006,Customer 6,Automation,Automation - RPA,PROD-0005,Process Bot,01/01/2024,61145.67,1,AUD,USA,North America,Mid-Market
+CUST-00006,Customer 6,Automation,Automation - RPA,PROD-0005,Process Bot,01/02/2024,63007.31,1,AUD,USA,North America,Mid-Market
+CUST-00006,Customer 6,Automation,Automation - RPA,PROD-0005,Process Bot,01/03/2024,59423.2,1,AUD,USA,North America,Mid-Market
+CUST-00006,Customer 6,Automation,Automation - RPA,PROD-0005,Process Bot,01/04/2024,55522.53,1,AUD,USA,North America,Mid-Market
+CUST-00006,Customer 6,Automation,Automation - RPA,PROD-0005,Process Bot,01/05/2024,58214.67,1,AUD,USA,North America,Mid-Market
+CUST-00006,Customer 6,Automation,Automation - RPA,PROD-0005,Process Bot,01/06/2024,57443.08,1,AUD,USA,North America,Mid-Market
+CUST-00007,Customer 7,Analytics,Analytics - Dashboards,PROD-0002,Data Explorer,01/01/2024,47804.71,1,JPY,Japan,APAC,Mid-Market
+CUST-00007,Customer 7,Analytics,Analytics - Dashboards,PROD-0002,Data Explorer,01/02/2024,50326.8,1,JPY,Japan,APAC,Mid-Market
+CUST-00007,Customer 7,Analytics,Analytics - Dashboards,PROD-0002,Data Explorer,01/03/2024,49790.61,1,JPY,Japan,APAC,Mid-Market
+CUST-00007,Customer 7,Analytics,Analytics - Dashboards,PROD-0002,Data Explorer,01/04/2024,52781.88,1,JPY,Japan,APAC,Mid-Market
+CUST-00007,Customer 7,Analytics,Analytics - Dashboards,PROD-0002,Data Explorer,01/05/2024,44257.08,1,JPY,Japan,APAC,Mid-Market
+CUST-00007,Customer 7,Analytics,Analytics - Dashboards,PROD-0002,Data Explorer,01/06/2024,47184.86,1,JPY,Japan,APAC,Mid-Market
+CUST-00007,Customer 7,Analytics,Analytics - Dashboards,PROD-0002,Data Explorer,01/07/2024,46575.46,1,JPY,Japan,APAC,Mid-Market
+CUST-00007,Customer 7,Analytics,Analytics - Dashboards,PROD-0002,Data Explorer,01/08/2024,51602.96,1,JPY,Japan,APAC,Mid-Market
+CUST-00008,Customer 8,Security,Security - Firewall,PROD-0004,Identity Manager,01/01/2024,247940.87,1,EUR,Canada,North America,Enterprise
+CUST-00008,Customer 8,Security,Security - Firewall,PROD-0004,Identity Manager,01/02/2024,240720.26,1,EUR,Canada,North America,Enterprise
+CUST-00008,Customer 8,Security,Security - Firewall,PROD-0004,Identity Manager,01/03/2024,239272.54,1,EUR,Canada,North America,Enterprise
+CUST-00008,Customer 8,Security,Security - Firewall,PROD-0004,Identity Manager,01/04/2024,273198.19,1,EUR,Canada,North America,Enterprise
+CUST-00008,Customer 8,Security,Security - Firewall,PROD-0004,Identity Manager,01/05/2024,249011.3,1,EUR,Canada,North America,Enterprise
+CUST-00008,Customer 8,Security,Security - Firewall,PROD-0004,Identity Manager,01/06/2024,270079.14,1,EUR,Canada,North America,Enterprise
+CUST-00008,Customer 8,Security,Security - Firewall,PROD-0004,Identity Manager,01/07/2024,254411.25,1,EUR,Canada,North America,Enterprise
+CUST-00008,Customer 8,Security,Security - Firewall,PROD-0004,Identity Manager,01/08/2024,229236.89,1,EUR,Canada,North America,Enterprise
+CUST-00008,Customer 8,Security,Security - Firewall,PROD-0004,Identity Manager,01/09/2024,277027.56,1,EUR,Canada,North America,Enterprise
+CUST-00008,Customer 8,Security,Security - Firewall,PROD-0004,Identity Manager,01/10/2024,268803.56,1,EUR,Canada,North America,Enterprise
+CUST-00008,Customer 8,Security,Security - Firewall,PROD-0004,Identity Manager,01/11/2024,275501.89,1,EUR,Canada,North America,Enterprise
+CUST-00009,Customer 9,Security,Security - Compliance,PROD-0003,Threat Detection,01/01/2024,13468.06,1,GBP,Japan,APAC,SMB
+CUST-00009,Customer 9,Security,Security - Compliance,PROD-0003,Threat Detection,01/02/2024,13562.94,1,GBP,Japan,APAC,SMB
+CUST-00009,Customer 9,Security,Security - Compliance,PROD-0003,Threat Detection,01/03/2024,11710.67,1,GBP,Japan,APAC,SMB
+CUST-00009,Customer 9,Security,Security - Compliance,PROD-0003,Threat Detection,01/04/2024,11302.75,1,GBP,Japan,APAC,SMB
+CUST-00009,Customer 9,Security,Security - Compliance,PROD-0003,Threat Detection,01/05/2024,12277.5,1,GBP,Japan,APAC,SMB
+CUST-00009,Customer 9,Security,Security - Compliance,PROD-0003,Threat Detection,01/06/2024,13623.38,1,GBP,Japan,APAC,SMB
+CUST-00009,Customer 9,Security,Security - Compliance,PROD-0003,Threat Detection,01/07/2024,13268.43,1,GBP,Japan,APAC,SMB
+CUST-00009,Customer 9,Security,Security - Compliance,PROD-0003,Threat Detection,01/08/2024,12013.47,1,GBP,Japan,APAC,SMB
+CUST-00009,Customer 9,Security,Security - Compliance,PROD-0003,Threat Detection,01/09/2024,13046.15,1,GBP,Japan,APAC,SMB
+CUST-00009,Customer 9,Security,Security - Compliance,PROD-0003,Threat Detection,01/10/2024,13131.29,1,GBP,Japan,APAC,SMB
+CUST-00010,Customer 10,Security,Security - Compliance,PROD-0003,Threat Detection,01/10/2024,26396.25,1,GBP,Germany,Europe,Mid-Market
+CUST-00010,Customer 10,Security,Security - Compliance,PROD-0003,Threat Detection,01/11/2024,22139.29,1,GBP,Germany,Europe,Mid-Market
+CUST-00010,Customer 10,Security,Security - Compliance,PROD-0003,Threat Detection,01/12/2024,22650.29,1,GBP,Germany,Europe,Mid-Market
+CUST-00010,Customer 10,Security,Security - Compliance,PROD-0003,Threat Detection,01/01/2025,24628.33,1,GBP,Germany,Europe,Mid-Market
+CUST-00010,Customer 10,Security,Security - Compliance,PROD-0003,Threat Detection,01/02/2025,25015.89,1,GBP,Germany,Europe,Mid-Market
+CUST-00010,Customer 10,Security,Security - Compliance,PROD-0003,Threat Detection,01/03/2025,22888.98,1,GBP,Germany,Europe,Mid-Market
+CUST-00010,Customer 10,Security,Security - Compliance,PROD-0003,Threat Detection,01/04/2025,22331.56,1,GBP,Germany,Europe,Mid-Market
+CUST-00010,Customer 10,Security,Security - Compliance,PROD-0003,Threat Detection,01/05/2025,26055.51,1,GBP,Germany,Europe,Mid-Market
+CUST-00010,Customer 10,Security,Security - Compliance,PROD-0003,Threat Detection,01/06/2025,22942.2,1,GBP,Germany,Europe,Mid-Market
+CUST-00010,Customer 10,Security,Security - Compliance,PROD-0003,Threat Detection,01/07/2025,24625.83,1,GBP,Germany,Europe,Mid-Market
+CUST-00010,Customer 10,Security,Security - Compliance,PROD-0003,Threat Detection,01/08/2025,24746.01,1,GBP,Germany,Europe,Mid-Market
+CUST-00010,Customer 10,Security,Security - Firewall,PROD-0004,Identity Manager,01/10/2024,70065.85,1,GBP,Germany,Europe,Mid-Market
+CUST-00010,Customer 10,Security,Security - Firewall,PROD-0004,Identity Manager,01/11/2024,66623.48,1,GBP,Germany,Europe,Mid-Market
+CUST-00010,Customer 10,Security,Security - Firewall,PROD-0004,Identity Manager,01/12/2024,65854.32,1,GBP,Germany,Europe,Mid-Market
+CUST-00010,Customer 10,Security,Security - Firewall,PROD-0004,Identity Manager,01/01/2025,71511.36,1,GBP,Germany,Europe,Mid-Market
+CUST-00010,Customer 10,Security,Security - Firewall,PROD-0004,Identity Manager,01/02/2025,66593.24,1,GBP,Germany,Europe,Mid-Market
+CUST-00010,Customer 10,Security,Security - Firewall,PROD-0004,Identity Manager,01/03/2025,65921.4,1,GBP,Germany,Europe,Mid-Market
+CUST-00010,Customer 10,Security,Security - Firewall,PROD-0004,Identity Manager,01/04/2025,64057.63,1,GBP,Germany,Europe,Mid-Market
+CUST-00010,Customer 10,Security,Security - Firewall,PROD-0004,Identity Manager,01/05/2025,71176.26,1,GBP,Germany,Europe,Mid-Market
+CUST-00010,Customer 10,Security,Security - Firewall,PROD-0004,Identity Manager,01/06/2025,68571.88,1,GBP,Germany,Europe,Mid-Market
+CUST-00010,Customer 10,Analytics,Analytics - BI,PROD-0008,Report Builder,01/10/2024,98722.85,1,GBP,Germany,Europe,Mid-Market
+CUST-00010,Customer 10,Analytics,Analytics - BI,PROD-0008,Report Builder,01/11/2024,98003.98,1,GBP,Germany,Europe,Mid-Market
+CUST-00010,Customer 10,Analytics,Analytics - BI,PROD-0008,Report Builder,01/12/2024,102003.69,1,GBP,Germany,Europe,Mid-Market
+CUST-00010,Customer 10,Analytics,Analytics - BI,PROD-0008,Report Builder,01/01/2025,88576.57,1,GBP,Germany,Europe,Mid-Market
+CUST-00010,Customer 10,Analytics,Analytics - BI,PROD-0008,Report Builder,01/02/2025,98819.98,1,GBP,Germany,Europe,Mid-Market
+CUST-00010,Customer 10,Analytics,Analytics - BI,PROD-0008,Report Builder,01/03/2025,97239.25,1,GBP,Germany,Europe,Mid-Market
+CUST-00011,Customer 11,Security,Security - Compliance,PROD-0001,Identity Manager,01/01/2024,548845.14,1,JPY,UK,Europe,Enterprise
+CUST-00011,Customer 11,Security,Security - Compliance,PROD-0001,Identity Manager,01/02/2024,456689.93,1,JPY,UK,Europe,Enterprise
+CUST-00011,Customer 11,Security,Security - Compliance,PROD-0001,Identity Manager,01/03/2024,470659.83,1,JPY,UK,Europe,Enterprise
+CUST-00011,Customer 11,Security,Security - Compliance,PROD-0001,Identity Manager,01/04/2024,475857.2,1,JPY,UK,Europe,Enterprise
+CUST-00011,Customer 11,Security,Security - Compliance,PROD-0001,Identity Manager,01/05/2024,542570.17,1,JPY,UK,Europe,Enterprise
+CUST-00011,Customer 11,Security,Security - Compliance,PROD-0001,Identity Manager,01/06/2024,537337.94,1,JPY,UK,Europe,Enterprise
+CUST-00011,Customer 11,Security,Security - Compliance,PROD-0001,Identity Manager,01/07/2024,537178.77,1,JPY,UK,Europe,Enterprise
+CUST-00011,Customer 11,Security,Security - Compliance,PROD-0001,Identity Manager,01/08/2024,486275.36,1,JPY,UK,Europe,Enterprise
+CUST-00011,Customer 11,Security,Security - Compliance,PROD-0001,Identity Manager,01/09/2024,465126.79,1,JPY,UK,Europe,Enterprise
+CUST-00011,Customer 11,Security,Security - Compliance,PROD-0001,Identity Manager,01/10/2024,532632.57,1,JPY,UK,Europe,Enterprise
+CUST-00011,Customer 11,Security,Security - Compliance,PROD-0001,Identity Manager,01/11/2024,519630.18,1,JPY,UK,Europe,Enterprise
+CUST-00011,Customer 11,Security,Security - Compliance,PROD-0001,Identity Manager,01/12/2024,510456.74,1,JPY,UK,Europe,Enterprise
+CUST-00012,Customer 12,Security,Security - Compliance,PROD-0001,Identity Manager,01/04/2024,6044.37,1,GBP,UK,Europe,SMB
+CUST-00012,Customer 12,Security,Security - Compliance,PROD-0001,Identity Manager,01/05/2024,5608.48,1,GBP,UK,Europe,SMB
+CUST-00012,Customer 12,Security,Security - Compliance,PROD-0001,Identity Manager,01/06/2024,5872.83,1,GBP,UK,Europe,SMB
+CUST-00012,Customer 12,Security,Security - Compliance,PROD-0001,Identity Manager,01/07/2024,6363.52,1,GBP,UK,Europe,SMB
+CUST-00012,Customer 12,Security,Security - Compliance,PROD-0001,Identity Manager,01/08/2024,6293.79,1,GBP,UK,Europe,SMB
+CUST-00012,Customer 12,Security,Security - Compliance,PROD-0001,Identity Manager,01/09/2024,5406.36,1,GBP,UK,Europe,SMB
+CUST-00012,Customer 12,Security,Security - Compliance,PROD-0001,Identity Manager,01/10/2024,5796.36,1,GBP,UK,Europe,SMB
+CUST-00012,Customer 12,Security,Security - Compliance,PROD-0001,Identity Manager,01/11/2024,5623.43,1,GBP,UK,Europe,SMB
+CUST-00012,Customer 12,Automation,Automation - RPA,PROD-0005,Process Bot,01/04/2024,8340.44,1,GBP,UK,Europe,SMB
+CUST-00012,Customer 12,Automation,Automation - RPA,PROD-0005,Process Bot,01/05/2024,9869.51,1,GBP,UK,Europe,SMB
+CUST-00012,Customer 12,Automation,Automation - RPA,PROD-0005,Process Bot,01/06/2024,8395.84,1,GBP,UK,Europe,SMB
+CUST-00012,Customer 12,Integration,Integration - API,PROD-0009,API Gateway,01/04/2024,7919.84,1,GBP,UK,Europe,SMB
+CUST-00012,Customer 12,Integration,Integration - API,PROD-0009,API Gateway,01/05/2024,7703.4,1,GBP,UK,Europe,SMB
+CUST-00012,Customer 12,Integration,Integration - API,PROD-0009,API Gateway,01/06/2024,6840.88,1,GBP,UK,Europe,SMB
+CUST-00012,Customer 12,Integration,Integration - API,PROD-0009,API Gateway,01/07/2024,7026.49,1,GBP,UK,Europe,SMB
+CUST-00012,Customer 12,Integration,Integration - API,PROD-0009,API Gateway,01/08/2024,6921.97,1,GBP,UK,Europe,SMB
+CUST-00013,Customer 13,Integration,Integration - API,PROD-0007,API Gateway,01/09/2024,432590.44,1,JPY,Canada,North America,Enterprise
+CUST-00013,Customer 13,Integration,Integration - API,PROD-0007,API Gateway,01/10/2024,395615.77,1,JPY,Canada,North America,Enterprise
+CUST-00013,Customer 13,Integration,Integration - API,PROD-0007,API Gateway,01/11/2024,393858.32,1,JPY,Canada,North America,Enterprise
+CUST-00013,Customer 13,Integration,Integration - API,PROD-0009,API Gateway,01/09/2024,109274.82,1,JPY,Canada,North America,Enterprise
+CUST-00013,Customer 13,Integration,Integration - API,PROD-0009,API Gateway,01/10/2024,104176.75,1,JPY,Canada,North America,Enterprise
+CUST-00013,Customer 13,Integration,Integration - API,PROD-0009,API Gateway,01/11/2024,93300.24,1,JPY,Canada,North America,Enterprise
+CUST-00014,Customer 14,Security,Security - Compliance,PROD-0001,Identity Manager,01/06/2024,9543.66,1,USD,UK,Europe,Startup
+CUST-00014,Customer 14,Security,Security - Compliance,PROD-0001,Identity Manager,01/07/2024,9255.35,1,USD,UK,Europe,Startup
+CUST-00014,Customer 14,Security,Security - Compliance,PROD-0001,Identity Manager,01/08/2024,9378.47,1,USD,UK,Europe,Startup
+CUST-00014,Customer 14,Security,Security - Compliance,PROD-0001,Identity Manager,01/09/2024,7885.58,1,USD,UK,Europe,Startup
+CUST-00014,Customer 14,Security,Security - Compliance,PROD-0001,Identity Manager,01/10/2024,9126.03,1,USD,UK,Europe,Startup
+CUST-00014,Customer 14,Security,Security - Compliance,PROD-0001,Identity Manager,01/11/2024,8421.3,1,USD,UK,Europe,Startup
+CUST-00014,Customer 14,AI/ML,AI/ML - Predictive,PROD-0006,Vision API,01/06/2024,7212.66,1,USD,UK,Europe,Startup
+CUST-00014,Customer 14,AI/ML,AI/ML - Predictive,PROD-0006,Vision API,01/07/2024,6775.38,1,USD,UK,Europe,Startup
+CUST-00014,Customer 14,AI/ML,AI/ML - Predictive,PROD-0006,Vision API,01/08/2024,7063.23,1,USD,UK,Europe,Startup
+CUST-00014,Customer 14,AI/ML,AI/ML - Predictive,PROD-0006,Vision API,01/09/2024,7502.71,1,USD,UK,Europe,Startup
+CUST-00014,Customer 14,AI/ML,AI/ML - Predictive,PROD-0006,Vision API,01/10/2024,7641.08,1,USD,UK,Europe,Startup
+CUST-00014,Customer 14,AI/ML,AI/ML - Predictive,PROD-0006,Vision API,01/11/2024,7327.89,1,USD,UK,Europe,Startup
+CUST-00015,Customer 15,Security,Security - Firewall,PROD-0004,Identity Manager,01/03/2024,9241.75,1,AUD,Canada,North America,SMB
+CUST-00015,Customer 15,Security,Security - Firewall,PROD-0004,Identity Manager,01/04/2024,10121.32,1,AUD,Canada,North America,SMB
+CUST-00015,Customer 15,Security,Security - Firewall,PROD-0004,Identity Manager,01/05/2024,9569.27,1,AUD,Canada,North America,SMB
+CUST-00015,Customer 15,Security,Security - Firewall,PROD-0004,Identity Manager,01/06/2024,11033.05,1,AUD,Canada,North America,SMB
+CUST-00015,Customer 15,Automation,Automation - RPA,PROD-0005,Process Bot,01/03/2024,8816.31,1,AUD,Canada,North America,SMB
+CUST-00015,Customer 15,Automation,Automation - RPA,PROD-0005,Process Bot,01/04/2024,7871.05,1,AUD,Canada,North America,SMB
+CUST-00015,Customer 15,Automation,Automation - RPA,PROD-0005,Process Bot,01/05/2024,7531.52,1,AUD,Canada,North America,SMB
+CUST-00015,Customer 15,Automation,Automation - RPA,PROD-0005,Process Bot,01/06/2024,7813.67,1,AUD,Canada,North America,SMB
+CUST-00015,Customer 15,Automation,Automation - RPA,PROD-0005,Process Bot,01/07/2024,8038.65,1,AUD,Canada,North America,SMB
+CUST-00015,Customer 15,Automation,Automation - RPA,PROD-0005,Process Bot,01/08/2024,8931.2,1,AUD,Canada,North America,SMB
+CUST-00015,Customer 15,Automation,Automation - RPA,PROD-0005,Process Bot,01/09/2024,9101.91,1,AUD,Canada,North America,SMB
+CUST-00015,Customer 15,Automation,Automation - RPA,PROD-0005,Process Bot,01/10/2024,7956.84,1,AUD,Canada,North America,SMB
+CUST-00016,Customer 16,AI/ML,AI/ML - Predictive,PROD-0006,Vision API,01/01/2024,195503.17,1,USD,France,Europe,Enterprise
+CUST-00016,Customer 16,AI/ML,AI/ML - Predictive,PROD-0006,Vision API,01/02/2024,220925.74,1,USD,France,Europe,Enterprise
+CUST-00016,Customer 16,AI/ML,AI/ML - Predictive,PROD-0006,Vision API,01/03/2024,206635.63,1,USD,France,Europe,Enterprise
+CUST-00016,Customer 16,AI/ML,AI/ML - Predictive,PROD-0006,Vision API,01/04/2024,205938.99,1,USD,France,Europe,Enterprise
+CUST-00016,Customer 16,AI/ML,AI/ML - Predictive,PROD-0006,Vision API,01/05/2024,228787.73,1,USD,France,Europe,Enterprise
+CUST-00016,Customer 16,AI/ML,AI/ML - Predictive,PROD-0006,Vision API,01/06/2024,223300.73,1,USD,France,Europe,Enterprise
+CUST-00016,Customer 16,Integration,Integration - API,PROD-0007,API Gateway,01/01/2024,256777.71,1,USD,France,Europe,Enterprise
+CUST-00016,Customer 16,Integration,Integration - API,PROD-0007,API Gateway,01/02/2024,236403.25,1,USD,France,Europe,Enterprise
+CUST-00016,Customer 16,Integration,Integration - API,PROD-0007,API Gateway,01/03/2024,250769.69,1,USD,France,Europe,Enterprise
+CUST-00016,Customer 16,Integration,Integration - API,PROD-0007,API Gateway,01/04/2024,246114.69,1,USD,France,Europe,Enterprise
+CUST-00016,Customer 16,Integration,Integration - API,PROD-0007,API Gateway,01/05/2024,239915.55,1,USD,France,Europe,Enterprise
+CUST-00016,Customer 16,Integration,Integration - API,PROD-0007,API Gateway,01/06/2024,249314.99,1,USD,France,Europe,Enterprise
+CUST-00016,Customer 16,Integration,Integration - API,PROD-0007,API Gateway,01/07/2024,233507.93,1,USD,France,Europe,Enterprise
+CUST-00016,Customer 16,Integration,Integration - API,PROD-0007,API Gateway,01/08/2024,255807.29,1,USD,France,Europe,Enterprise
+CUST-00016,Customer 16,Integration,Integration - API,PROD-0007,API Gateway,01/09/2024,221081.38,1,USD,France,Europe,Enterprise
+CUST-00016,Customer 16,Integration,Integration - API,PROD-0007,API Gateway,01/10/2024,266454.0,1,USD,France,Europe,Enterprise
+CUST-00016,Customer 16,Integration,Integration - API,PROD-0007,API Gateway,01/11/2024,247442.1,1,USD,France,Europe,Enterprise
+CUST-00016,Customer 16,Integration,Integration - API,PROD-0007,API Gateway,01/12/2024,256330.06,1,USD,France,Europe,Enterprise
+CUST-00016,Customer 16,Integration,Integration - API,PROD-0009,API Gateway,01/01/2024,423431.33,1,USD,France,Europe,Enterprise
+CUST-00016,Customer 16,Integration,Integration - API,PROD-0009,API Gateway,01/02/2024,451834.41,1,USD,France,Europe,Enterprise
+CUST-00016,Customer 16,Integration,Integration - API,PROD-0009,API Gateway,01/03/2024,487671.11,1,USD,France,Europe,Enterprise
+CUST-00016,Customer 16,Integration,Integration - API,PROD-0009,API Gateway,01/04/2024,403602.9,1,USD,France,Europe,Enterprise
+CUST-00017,Customer 17,Automation,Automation - RPA,PROD-0005,Process Bot,01/11/2024,7812.31,1,USD,France,Europe,SMB
+CUST-00017,Customer 17,Automation,Automation - RPA,PROD-0005,Process Bot,01/12/2024,8766.96,1,USD,France,Europe,SMB
+CUST-00017,Customer 17,Automation,Automation - RPA,PROD-0005,Process Bot,01/01/2025,8469.91,1,USD,France,Europe,SMB
+CUST-00017,Customer 17,Integration,Integration - API,PROD-0009,API Gateway,01/11/2024,9176.6,1,USD,France,Europe,SMB
+CUST-00017,Customer 17,Integration,Integration - API,PROD-0009,API Gateway,01/12/2024,8924.46,1,USD,France,Europe,SMB
+CUST-00017,Customer 17,Integration,Integration - API,PROD-0009,API Gateway,01/01/2025,8284.28,1,USD,France,Europe,SMB
+CUST-00017,Customer 17,Integration,Integration - API,PROD-0009,API Gateway,01/02/2025,9119.6,1,USD,France,Europe,SMB
+CUST-00017,Customer 17,Integration,Integration - API,PROD-0009,API Gateway,01/03/2025,8615.0,1,USD,France,Europe,SMB
+CUST-00017,Customer 17,Integration,Integration - API,PROD-0009,API Gateway,01/04/2025,9266.52,1,USD,France,Europe,SMB
+CUST-00017,Customer 17,Integration,Integration - API,PROD-0009,API Gateway,01/05/2025,8252.83,1,USD,France,Europe,SMB
+CUST-00017,Customer 17,Integration,Integration - API,PROD-0009,API Gateway,01/06/2025,8950.41,1,USD,France,Europe,SMB
+CUST-00017,Customer 17,Integration,Integration - API,PROD-0009,API Gateway,01/07/2025,8662.55,1,USD,France,Europe,SMB
+CUST-00018,Customer 18,Analytics,Analytics - BI,PROD-0008,Report Builder,01/08/2024,296479.14,1,JPY,France,Europe,Enterprise
+CUST-00018,Customer 18,Analytics,Analytics - BI,PROD-0008,Report Builder,01/09/2024,305781.49,1,JPY,France,Europe,Enterprise
+CUST-00018,Customer 18,Analytics,Analytics - BI,PROD-0008,Report Builder,01/10/2024,293243.48,1,JPY,France,Europe,Enterprise
+CUST-00018,Customer 18,Analytics,Analytics - BI,PROD-0008,Report Builder,01/11/2024,288924.84,1,JPY,France,Europe,Enterprise
+CUST-00018,Customer 18,Analytics,Analytics - BI,PROD-0008,Report Builder,01/12/2024,267919.11,1,JPY,France,Europe,Enterprise
+CUST-00018,Customer 18,Analytics,Analytics - BI,PROD-0008,Report Builder,01/01/2025,289205.04,1,JPY,France,Europe,Enterprise
+CUST-00018,Customer 18,AI/ML,AI/ML - Vision,PROD-0010,NLP Toolkit,01/08/2024,213624.81,1,JPY,France,Europe,Enterprise
+CUST-00018,Customer 18,AI/ML,AI/ML - Vision,PROD-0010,NLP Toolkit,01/09/2024,210922.17,1,JPY,France,Europe,Enterprise
+CUST-00018,Customer 18,AI/ML,AI/ML - Vision,PROD-0010,NLP Toolkit,01/10/2024,207775.39,1,JPY,France,Europe,Enterprise
+CUST-00018,Customer 18,AI/ML,AI/ML - Vision,PROD-0010,NLP Toolkit,01/11/2024,189774.37,1,JPY,France,Europe,Enterprise
+CUST-00018,Customer 18,AI/ML,AI/ML - Vision,PROD-0010,NLP Toolkit,01/12/2024,188749.68,1,JPY,France,Europe,Enterprise
+CUST-00018,Customer 18,AI/ML,AI/ML - Vision,PROD-0010,NLP Toolkit,01/01/2025,181732.34,1,JPY,France,Europe,Enterprise
+CUST-00018,Customer 18,AI/ML,AI/ML - Vision,PROD-0010,NLP Toolkit,01/02/2025,190585.82,1,JPY,France,Europe,Enterprise
+CUST-00018,Customer 18,AI/ML,AI/ML - Vision,PROD-0010,NLP Toolkit,01/03/2025,199836.02,1,JPY,France,Europe,Enterprise
+CUST-00018,Customer 18,AI/ML,AI/ML - Vision,PROD-0010,NLP Toolkit,01/04/2025,214882.61,1,JPY,France,Europe,Enterprise
+CUST-00018,Customer 18,AI/ML,AI/ML - Vision,PROD-0010,NLP Toolkit,01/05/2025,183676.53,1,JPY,France,Europe,Enterprise
+CUST-00018,Customer 18,AI/ML,AI/ML - Vision,PROD-0010,NLP Toolkit,01/06/2025,197398.07,1,JPY,France,Europe,Enterprise
+CUST-00018,Customer 18,AI/ML,AI/ML - Vision,PROD-0010,NLP Toolkit,01/07/2025,206046.99,1,JPY,France,Europe,Enterprise
+CUST-00019,Customer 19,Integration,Integration - API,PROD-0007,API Gateway,01/01/2024,2905.8,1,GBP,Canada,North America,Startup
+CUST-00019,Customer 19,Integration,Integration - API,PROD-0007,API Gateway,01/02/2024,2539.19,1,GBP,Canada,North America,Startup
+CUST-00019,Customer 19,Integration,Integration - API,PROD-0007,API Gateway,01/03/2024,2959.29,1,GBP,Canada,North America,Startup
+CUST-00019,Customer 19,Integration,Integration - API,PROD-0007,API Gateway,01/04/2024,2970.04,1,GBP,Canada,North America,Startup
+CUST-00019,Customer 19,Integration,Integration - API,PROD-0007,API Gateway,01/05/2024,2596.14,1,GBP,Canada,North America,Startup
+CUST-00019,Customer 19,Integration,Integration - API,PROD-0007,API Gateway,01/06/2024,2775.67,1,GBP,Canada,North America,Startup
+CUST-00019,Customer 19,Integration,Integration - API,PROD-0007,API Gateway,01/07/2024,2635.19,1,GBP,Canada,North America,Startup
+CUST-00019,Customer 19,Integration,Integration - API,PROD-0007,API Gateway,01/08/2024,3075.95,1,GBP,Canada,North America,Startup
+CUST-00019,Customer 19,Integration,Integration - API,PROD-0007,API Gateway,01/09/2024,2827.97,1,GBP,Canada,North America,Startup
+CUST-00020,Customer 20,Integration,Integration - API,PROD-0009,API Gateway,01/01/2024,12675.78,1,GBP,Germany,Europe,SMB
+CUST-00020,Customer 20,Integration,Integration - API,PROD-0009,API Gateway,01/02/2024,12355.76,1,GBP,Germany,Europe,SMB
+CUST-00020,Customer 20,Integration,Integration - API,PROD-0009,API Gateway,01/03/2024,13121.64,1,GBP,Germany,Europe,SMB
+CUST-00020,Customer 20,Integration,Integration - API,PROD-0009,API Gateway,01/04/2024,12183.31,1,GBP,Germany,Europe,SMB
